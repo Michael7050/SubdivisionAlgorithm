@@ -27,6 +27,9 @@ public class Main {
 
     private void bruteForceMethod(int x, int y)
     {
+        //first reduce the total value by what we are given -
+        this.totalLandValue = this.totalLandValue - landValue[x][y];
+
         int result1X = x;
         int result2X = x;
         int result1Y = y;
@@ -35,31 +38,54 @@ public class Main {
 
         //we use recursion
         //first split checks each possible split and gives us value of the two chunks of land, and total value of land so far.
+
+        //first split vertically, run from left to right
         if (x > 1)
         {
-            for (int l = 1; l > x; l++)
+            for (int l = 1; l < x; l++)
             {
                 result1X = l;
                 result2X = x-l;
                 result1Y = y;
                 result2Y = y;
                 verticalSplit = true;
-                //run recursive function
+
+                //for each split, add new value
+                this.totalLandValue = this.totalLandValue + (landValue[result1X][result1Y] + landValue[result2X][result2Y]);
+                //reduce cost of split
+                this.totalLandValue = this.totalLandValue - subdivideCost(verticalSplit, x, y);
+
+                //record new values in arraylist(?)
+
+                //run recursive function on the left side, then run it on the right side
             }
         }
+
+        //then we split it horizontally from bottom to top
         if (y > 1)
         {
-            for (int w = 1; w > y; w++)
+            for (int w = 1; w < y; w++)
             {
                 result1Y = w;
                 result2Y = y-w;
                 result1X = x;
                 result2X = x;
                 verticalSplit = false;
+
+                //for each split, add new value
+                this.totalLandValue = this.totalLandValue + (landValue[result1X][result1Y] + landValue[result2X][result2Y]);
+                //reduce cost of split
+                this.totalLandValue = this.totalLandValue - subdivideCost(verticalSplit, x, y);
+
+                //record new values in arraylist(?)
+
+                //run recursive function on the bottom side, then run it on the top side
             }
         }
 
-        //split creates a tree to traverse?
+        //if both x and y are 1, return.
+
+        return;
 
         //take in an area of land with length x, and width y
 
