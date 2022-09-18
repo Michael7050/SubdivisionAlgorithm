@@ -20,11 +20,62 @@ public class Main
 
     public static void main(String[] args)
     {
+
+//        GUI();
+
+        //test method for checking array
+        //arrayToString(landValue);
         Main main = new Main();
         int plotx = length;
         int ploty = height;
 
-        main.exactSolution(plotx, ploty);
+//        ArrayList<Integer[][]> splitData = new ArrayList<Integer[][]>();
+//
+//        int[][] storeSplitData = {{450, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
+//        int[][] storeSplitData2 = {{500, 0, 0, 0, 0, 0}, {1, 1, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
+//
+//
+////        splitData.add(new ArrayList<int[][]>);
+//
+//        List<int[][]> list = new ArrayList<>();
+//
+//        int[][] copiedArray = new int[storeSplitData.length][storeSplitData[0].length];
+//        for (int i = 0; i < storeSplitData.length; i++) {
+//            for(int j = 0; j < storeSplitData[0].length; j++) {
+//                copiedArray[i][j] = storeSplitData[i][j];
+//            }
+//        }
+//
+//        int[][] copiedArray2 = new int[storeSplitData2.length][storeSplitData2[0].length];
+//        for (int i = 0; i < storeSplitData2.length; i++) {
+//            for(int j = 0; j < storeSplitData2[0].length; j++) {
+//                copiedArray2[i][j] = storeSplitData2[i][j];
+//            }
+//        }
+//
+//        list.add(copiedArray);
+//        list.add(copiedArray2);
+//
+//        for (int[][] array : list ){
+//            int[][] temp = array;
+//            for (int[] element : temp) {
+//                System.out.println(Arrays.toString(element));
+//            }
+//            System.out.println("\n");
+//    }
+//
+//
+//        int[][] area;
+//        area = new int[3][6];
+//        for (int i = 0; i < 3; i++) {
+//            for (int j = 0; j < 6; j++) {
+//                area[i][j] = 1;
+//            }
+//        }
+//
+//        System.out.println(Arrays.deepToString(area));
+
+        main.exactSolution(plotx - 1, ploty - 1);
     }
 
     //Brute Force
@@ -41,7 +92,11 @@ public class Main
         totalLandValue = getLandPrice(x, y);
         //debug code
         System.out.println(totalLandValue);
-        exactMethod(x, y);
+        int xStart = 0;
+        int xEnd = x-1;
+        int yStart = 0;
+        int yEnd = y-1;
+        exactMethod(xStart, xEnd, yStart, yEnd);
     }
 
     private void bruteForceMethod(int x, int y)
@@ -134,101 +189,182 @@ public class Main
     //Greedy Approach
 
     //Exact Approach
-    private void exactMethod(int x, int y)
+    private void exactMethod(int xStart, int xEnd, int yStart, int yEnd)
     {
         //this is an exact method
         //goes through each split, returns land value
         //takes highest value and continues with it.
 
+        //so this takes in the coordinates of a chunk of land in the array.
+
         boolean vertSplit = true;
-        int temp1X = x;
-        int temp1Y = y;
-        int temp2X = x;
-        int temp2Y = y;
-        int result1X = x;
-        int result2X = x;
-        int result1Y = y;
-        int result2Y = y;
+
+
+        //temp result values
+        int temp1XStart = xStart;
+        int temp1YStart = yStart;
+        int temp1XEnd = xEnd;
+        int temp1YEnd = yEnd;
+        int temp2XStart = xStart;
+        int temp2YStart = yStart;
+        int temp2XEnd = xEnd;
+        int temp2YEnd = yEnd;
+
+        //final result values
+        int result1XStart = xStart;
+        int result1XEnd = xEnd;
+        int result1YStart = yEnd;
+        int result1YEnd = yEnd;
+        int result2XStart = xStart;
+        int result2XEnd = xEnd;
+        int result2YStart = yEnd;
+        int result2YEnd = yEnd;
+
         int tempLandValue = totalLandValue;
         int currentHighestValue = totalLandValue;
 
+
+
+        //area of current landplot:
+        //make sure to check to make sure 0's are accounted for TODO
+        int x = ((xEnd) - (xStart));
+        int y = ((yEnd) - (yStart));
+
+
+
         //subtract current chunk of land from value
-        tempLandValue = totalLandValue - getLandPrice(x,y);
+        int currentLandValue = totalLandValue - getLandPrice(x,y);
 
         //go through vertical splits
-        for (int l = 1; l < x; l++)
+        if (x > 0) //checks for if land is wider than one
         {
-            temp1X = l;
-            temp2X = x-l;
-            temp1Y = y;
-            temp2Y = y;
-            vertSplit = true;
-
-            //for each split, add new value
-            tempLandValue = tempLandValue + (getLandPrice(result1X, result1Y) + getLandPrice(result2X, result2Y));
-            //reduce cost of split
-            tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
-
-            //if the split is the current best, save current split results to current best
-            if (tempLandValue > currentHighestValue)
+            //this runs through vertical splits of the given chunk of land
+            //does this have the split in the right place? should I do xstart + 1? TODO
+            for (int l = xStart; l < xEnd + 1; l++)
             {
-                currentHighestValue = tempLandValue;
-                result1X = temp1X;
-                result1Y = temp1Y;
-                result2X = temp2X;
-                result2Y = temp1Y;
-            }
+//                System.out.println(l);
+                //temp 1 is results to the left
+                temp1XStart = xStart;
+                temp1XEnd = l;
+                temp1YStart = yStart;
+                temp1YEnd = yEnd;
 
+                //temp 2 is results to the right
+                temp2XStart = l;
+                temp2XEnd = xEnd;
+                temp2YStart = yStart;
+                temp2YEnd = yEnd;
+                vertSplit = true;
+
+                //find area of each result
+                int temp1XArea = ((temp1XEnd + 1) - (temp1XStart + 1));
+                int temp1YArea = ((temp1YEnd + 1) - (temp1YStart + 1));
+                int temp2XArea = ((temp2XEnd + 1) - (temp2XStart + 1));
+                int temp2YArea = ((temp2YEnd + 1) - (temp2YStart + 1));
+
+
+                //for each split, add new value
+                tempLandValue = currentLandValue + (getLandPrice(temp1XArea, temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
+                tempLandValue = tempLandValue + (getLandPrice(temp1XArea, temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
+
+                //reduce cost of split
+                tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
+
+
+                //if the split is the current best, save current split results to current best
+                if (tempLandValue > currentHighestValue)
+                {
+                    currentHighestValue = tempLandValue;
+                    //set result 1
+                    result1XStart = temp1XStart;
+                    result1YStart = temp1YStart;
+                    result1XEnd = temp1XEnd;
+                    result1YEnd = temp1YEnd;
+                    //set result 2
+                    result2XStart = temp2XStart;
+                    result2XEnd = temp2XEnd;
+                    result2YStart = temp2YStart;
+                    result2YEnd = temp2YEnd;
+
+                }
+
+            }
         }
 
         //go through horizontal splits now
-        if (y > 1)
+        if (y > 0)
         {
-            for (int w = 1; w < y; w++)
+            for (int w = yStart; w < yEnd; w++)
             {
-                temp1X = x;
-                temp2X = x;
-                temp1Y = w;
-                temp2Y = y-w;
+                //set x values as they don't change
+                temp1XStart = xStart;
+                temp2XStart = xStart;
+                temp1XEnd = xEnd;
+                temp2XEnd = xEnd;
+
+                //set y values
+                //temp 1 is above, temp 2 is below
+                temp1YStart = yStart;
+                temp1YEnd = w;
+
+                temp2YStart = w+1;
+                temp2YEnd = yEnd;
+
                 vertSplit = false;
 
+                //find area of each result
+                int temp1XArea = ((temp1XEnd + 1) - (temp1XStart + 1));
+                int temp1YArea = ((temp1YEnd + 1) - (temp1YStart + 1));
+                int temp2XArea = ((temp2XEnd + 1) - (temp2XStart + 1));
+                int temp2YArea = ((temp2YEnd + 1) - (temp2YStart + 1));
+
                 //for each split, add new value
-                tempLandValue = totalLandValue + (getLandPrice(result1X,result1Y) + getLandPrice(result2X, result2Y));
+                tempLandValue = currentLandValue + (getLandPrice(temp1XArea,temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
                 //reduce cost of split
                 tempLandValue = totalLandValue - subdivideCost(vertSplit, x, y);
 
                 if (tempLandValue > currentHighestValue)
                 {
                     currentHighestValue = tempLandValue;
-                    result1X = temp1X;
-                    result1Y = temp1Y;
-                    result2X = temp2X;
-                    result2Y = temp1Y;
+                    //set result 1
+                    result1XStart = temp1XStart;
+                    result1YStart = temp1YStart;
+                    result1XEnd = temp1XEnd;
+                    result1YEnd = temp1YEnd;
+                    //set result 2
+                    result2XStart = temp2XStart;
+                    result2XEnd = temp2XEnd;
+                    result2YStart = temp2YStart;
+                    result2YEnd = temp2YEnd;
                 }
             }
 
-            if ((result1X == x) && (result1Y == y))
+            //checks to see if result is the same as what was given
+            if ((result1XStart == xStart) && (result1YStart == yStart) && (result1YEnd == yEnd) && (result1XEnd == xEnd))
             {
                 return;
             }
 
             splitCounter++;
             //record current splits in data structure TODO
-            for (int a = (temp1X); a < landPlot.length; a++)
+
+            //apply to the landplot - the land to the bottom right of the split is the new increment up one
+            for (int a = (temp2XStart); a <= temp2XEnd; a++)
             {
-                for (int b = (temp1Y); b < landPlot[a].length; b++)
+                for (int b = (temp2YStart); b <= temp2YEnd; b++)
                 {
-                    landPlot[a][b] = splitCounter;
+                    landPlot[a][b-1] = splitCounter;
                 }
             }
+            System.out.println(splitCounter);
             //debug code here TODO for easier finding
             print2D(landPlot);
 
             //put snapshot of this and templandvalue in hashmap TODO
 
             //then do recursive method with our resultant splits
-            exactMethod(result1X, result1Y);
-            exactMethod(result2X, result2Y);
+            exactMethod(result1XStart, result1XEnd, result1YStart, result1YEnd);
+            exactMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
         }
 
 
@@ -241,8 +377,20 @@ public class Main
 
     private int getLandPrice(int x, int y)
     {
+        if((x == 0) || (y == 0))
+        {
+            return 0;
+        }
         return landValue[x-1][y-1];
+
     }
+
+
+//    private int getLandPrice(int x, int y)
+//    {
+////        System.out.println(landValue[x][y]);
+//        return landValue[x][y];
+//    }
 
     private static void arrayToString(int[][] x)
     {
@@ -267,6 +415,115 @@ public class Main
         }
         return (result * cost);
     }
+
+    //gui
+    public static void GUI() {
+        final int rows = 3;
+        final int col = 6;
+
+        int[][] storeSplitData = {{500, 0, 0, 0, 0, 0}, {1, 1, 1, 1, 1, 1}, {2, 3, 4, 4, 4, 5}, {2, 3, 4, 4, 4, 6}};
+        int[] row1 = storeSplitData[1];
+        int[] row2 = storeSplitData[2];
+        int[] row3 = storeSplitData[3];
+        int[] value = storeSplitData[0];
+
+
+        JFrame frame = new JFrame("GUI");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setVisible(true);
+        frame.setLayout(new GridLayout(0, 6, 0, 0));
+        JLabel label1 = new JLabel(String.valueOf(row1[0]), SwingConstants.CENTER);
+        JLabel label2 = new JLabel(String.valueOf(row1[1]), SwingConstants.CENTER);
+        JLabel label3 = new JLabel(String.valueOf(row1[2]), SwingConstants.CENTER);
+        JLabel label4 = new JLabel(String.valueOf(row1[3]), SwingConstants.CENTER);
+        JLabel label5 = new JLabel(String.valueOf(row1[4]), SwingConstants.CENTER);
+        JLabel label6 = new JLabel(String.valueOf(row1[5]), SwingConstants.CENTER);
+        JLabel label7 = new JLabel(String.valueOf(row2[0]), SwingConstants.CENTER);
+        JLabel label8 = new JLabel(String.valueOf(row2[1]), SwingConstants.CENTER);
+        JLabel label9 = new JLabel(String.valueOf(row2[2]), SwingConstants.CENTER);
+        JLabel label10 = new JLabel(String.valueOf(row2[3]), SwingConstants.CENTER);
+        JLabel label11 = new JLabel(String.valueOf(row2[4]), SwingConstants.CENTER);
+        JLabel label12 = new JLabel(String.valueOf(row2[5]), SwingConstants.CENTER);
+        JLabel label13 = new JLabel(String.valueOf(row3[0]), SwingConstants.CENTER);
+        JLabel label14 = new JLabel(String.valueOf(row3[1]), SwingConstants.CENTER);
+        JLabel label15 = new JLabel(String.valueOf(row3[2]), SwingConstants.CENTER);
+        JLabel label16 = new JLabel(String.valueOf(row3[3]), SwingConstants.CENTER);
+        JLabel label17 = new JLabel(String.valueOf(row3[4]), SwingConstants.CENTER);
+        JLabel label18 = new JLabel(String.valueOf(row3[5]), SwingConstants.CENTER);
+        JLabel label19 = new JLabel("Value: " + String.valueOf(value[0]), SwingConstants.CENTER);
+
+        Border border = BorderFactory.createLineBorder(Color.black);
+        frame.add(label1);
+        label1.setBorder(border);
+        frame.add(label2);
+        label2.setBorder(border);
+        frame.add(label3);
+        label3.setBorder(border);
+        frame.add(label4);
+        label4.setBorder(border);
+        frame.add(label5);
+        label5.setBorder(border);
+        frame.add(label6);
+        label6.setBorder(border);
+        frame.add(label7);
+        label7.setBorder(border);
+        frame.add(label8);
+        label8.setBorder(border);
+        frame.add(label9);
+        label9.setBorder(border);
+        frame.add(label10);
+        label10.setBorder(border);
+        frame.add(label11);
+        label11.setBorder(border);
+        frame.add(label12);
+        label12.setBorder(border);
+        frame.add(label13);
+        label13.setBorder(border);
+        frame.add(label14);
+        label14.setBorder(border);
+        frame.add(label15);
+        label15.setBorder(border);
+        frame.add(label16);
+        label16.setBorder(border);
+        frame.add(label17);
+        label17.setBorder(border);
+        frame.add(label18);
+        label18.setBorder(border);
+        frame.add(label19);
+
+//        frame.
+
+
+//        frame.add(new JLabel("1"));
+//        frame.add(new JLabel("2"));
+//        frame.add(new JLabel("3"));
+//        frame.add(new JLabel("4"));
+//        frame.add(new JLabel("5"));
+//        frame.add(new JLabel("6"));
+//        frame.add(new JLabel("7"));
+//        frame.add(new JLabel("8"));
+//        frame.add(new JLabel("9"));
+//        frame.add(new JLabel("10"));
+//        frame.add(new JLabel("11"));
+//        frame.add(new JLabel("12"));
+//        frame.add(new JLabel("13"));
+//        frame.add(new JLabel("14"));
+//        frame.add(new JLabel("15"));
+//        frame.add(new JLabel("16"));
+//        frame.add(new JLabel("17"));
+//        frame.add(new JLabel("18"));
+
+
+
+
+
+
+    }
+
+
+
 
     //code from stackoverflow to print out 2d array for bugtesting.
     public static void print2D(int mat[][])
