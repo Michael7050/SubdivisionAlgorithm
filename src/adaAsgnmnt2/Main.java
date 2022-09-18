@@ -12,32 +12,42 @@ public class Main
     //initialise cost for subdividing a metre of land, and number of divides we want,
     //also initialising our bits of land
     private static int cost = 50;
-    int height = 3;
-    int length = 6;
+    static int height = 3;
+    static int length = 6;
     private int totalLandValue = 0;
+    private int splitCounter = 0;
+    int[][] landPlot = new int[height][length];
 
     public static void main(String[] args)
     {
+        Main main = new Main();
+        int plotx = length;
+        int ploty = height;
 
-        //test method for checking array
-        //arrayToString(landValue);
-
-
+        main.exactSolution(plotx, ploty);
     }
 
     //Brute Force
 
     private void bruteForce(int x, int y)
     {
-        this.totalLandValue = landValue[x][y];
+        totalLandValue = getLandPrice(x, y);
         bruteForceMethod(x, y);
         //then traverse data structure and return result with highest data value.
+    }
+
+    private void exactSolution(int x, int y)
+    {
+        totalLandValue = getLandPrice(x, y);
+        //debug code
+        System.out.println(totalLandValue);
+        exactMethod(x, y);
     }
 
     private void bruteForceMethod(int x, int y)
     {
         //first reduce the total value by what we are given -
-        this.totalLandValue = this.totalLandValue - landValue[x][y];
+        totalLandValue = totalLandValue - getLandPrice(x, y);
 
         int result1X = x;
         int result2X = x;
@@ -60,9 +70,9 @@ public class Main
                 verticalSplit = true;
 
                 //for each split, add new value
-                this.totalLandValue = this.totalLandValue + (landValue[result1X][result1Y] + landValue[result2X][result2Y]);
+                totalLandValue = totalLandValue + (getLandPrice(result1X, result1Y) + getLandPrice(result2X, result2Y));
                 //reduce cost of split
-                this.totalLandValue = this.totalLandValue - subdivideCost(verticalSplit, x, y);
+                totalLandValue = totalLandValue - subdivideCost(verticalSplit, x, y);
 
                 //record new values in arraylist(?) TODO
 
@@ -85,9 +95,9 @@ public class Main
                 verticalSplit = false;
 
                 //for each split, add new value
-                this.totalLandValue = this.totalLandValue + (landValue[result1X][result1Y] + landValue[result2X][result2Y]);
+                totalLandValue = totalLandValue + (landValue[result1X][result1Y] + landValue[result2X][result2Y]);
                 //reduce cost of split
-                this.totalLandValue = this.totalLandValue - subdivideCost(verticalSplit, x, y);
+                totalLandValue = totalLandValue - subdivideCost(verticalSplit, x, y);
 
                 //record new values in arraylist(?) TODO
                 bruteForceMethod(result1X, result1Y);
@@ -139,11 +149,11 @@ public class Main
         int result2X = x;
         int result1Y = y;
         int result2Y = y;
-        int tempLandValue = this.totalLandValue;
-        int currentHighestValue = this.totalLandValue;
+        int tempLandValue = totalLandValue;
+        int currentHighestValue = totalLandValue;
 
         //subtract current chunk of land from value
-        this.totalLandValue = this.totalLandValue - landValue[x][y];
+        tempLandValue = totalLandValue - getLandPrice(x,y);
 
         //go through vertical splits
         for (int l = 1; l < x; l++)
@@ -155,9 +165,9 @@ public class Main
             vertSplit = true;
 
             //for each split, add new value
-            tempLandValue = this.totalLandValue + (landValue[result1X][result1Y] + landValue[result2X][result2Y]);
+            tempLandValue = tempLandValue + (getLandPrice(result1X, result1Y) + getLandPrice(result2X, result2Y));
             //reduce cost of split
-            tempLandValue = this.totalLandValue - subdivideCost(vertSplit, x, y);
+            tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
             //if the split is the current best, save current split results to current best
             if (tempLandValue > currentHighestValue)
@@ -183,9 +193,9 @@ public class Main
                 vertSplit = false;
 
                 //for each split, add new value
-                tempLandValue = this.totalLandValue + (landValue[result1X][result1Y] + landValue[result2X][result2Y]);
+                tempLandValue = totalLandValue + (getLandPrice(result1X,result1Y) + getLandPrice(result2X, result2Y));
                 //reduce cost of split
-                tempLandValue = this.totalLandValue - subdivideCost(vertSplit, x, y);
+                tempLandValue = totalLandValue - subdivideCost(vertSplit, x, y);
 
                 if (tempLandValue > currentHighestValue)
                 {
@@ -202,7 +212,19 @@ public class Main
                 return;
             }
 
+            splitCounter++;
             //record current splits in data structure TODO
+            for (int a = (temp1X); a < landPlot.length; a++)
+            {
+                for (int b = (temp1Y); b < landPlot[a].length; b++)
+                {
+                    landPlot[a][b] = splitCounter;
+                }
+            }
+            //debug code here TODO for easier finding
+            print2D(landPlot);
+
+            //put snapshot of this and templandvalue in hashmap TODO
 
             //then do recursive method with our resultant splits
             exactMethod(result1X, result1Y);
@@ -216,6 +238,11 @@ public class Main
     }
 
     //print out array for debugging
+
+    private int getLandPrice(int x, int y)
+    {
+        return landValue[x-1][y-1];
+    }
 
     private static void arrayToString(int[][] x)
     {
@@ -239,5 +266,18 @@ public class Main
             result = y;
         }
         return (result * cost);
+    }
+
+    //code from stackoverflow to print out 2d array for bugtesting.
+    public static void print2D(int mat[][])
+    {
+        for (int[] row : mat)
+        {
+
+            // converting each row as string
+            // and then printing in a separate line
+            System.out.println(Arrays.toString(row));
+        }
+        System.out.println();
     }
 }
