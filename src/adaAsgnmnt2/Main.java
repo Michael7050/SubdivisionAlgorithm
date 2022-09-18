@@ -1,5 +1,8 @@
 package adaAsgnmnt2;
 
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.*;
 
@@ -93,9 +96,9 @@ public class Main
         //debug code
         System.out.println(totalLandValue);
         int xStart = 0;
-        int xEnd = x-1;
+        int xEnd = x;
         int yStart = 0;
-        int yEnd = y-1;
+        int yEnd = y;
         exactMethod(xStart, xEnd, yStart, yEnd);
     }
 
@@ -198,6 +201,7 @@ public class Main
         //so this takes in the coordinates of a chunk of land in the array.
 
         boolean vertSplit = true;
+
 
 
         //temp result values
@@ -349,11 +353,15 @@ public class Main
             //record current splits in data structure TODO
 
             //apply to the landplot - the land to the bottom right of the split is the new increment up one
-            for (int a = (temp2XStart); a <= temp2XEnd; a++)
+            for (int a = (temp2XStart); a < temp2XEnd; a++)
             {
-                for (int b = (temp2YStart); b <= temp2YEnd; b++)
+                System.out.println("here");
+                System.out.println(a);
+                for (int b = (temp2YStart); b < temp2YEnd; b++)
                 {
-                    landPlot[a][b-1] = splitCounter;
+                    System.out.println("here");
+                    System.out.println(a + " - " + b);
+                    landPlot[a][b] = splitCounter;
                 }
             }
             System.out.println(splitCounter);
@@ -364,7 +372,7 @@ public class Main
 
             //then do recursive method with our resultant splits
             exactMethod(result1XStart, result1XEnd, result1YStart, result1YEnd);
-            exactMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
+//            exactMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
         }
 
 
@@ -492,32 +500,6 @@ public class Main
         frame.add(label18);
         label18.setBorder(border);
         frame.add(label19);
-
-//        frame.
-
-
-//        frame.add(new JLabel("1"));
-//        frame.add(new JLabel("2"));
-//        frame.add(new JLabel("3"));
-//        frame.add(new JLabel("4"));
-//        frame.add(new JLabel("5"));
-//        frame.add(new JLabel("6"));
-//        frame.add(new JLabel("7"));
-//        frame.add(new JLabel("8"));
-//        frame.add(new JLabel("9"));
-//        frame.add(new JLabel("10"));
-//        frame.add(new JLabel("11"));
-//        frame.add(new JLabel("12"));
-//        frame.add(new JLabel("13"));
-//        frame.add(new JLabel("14"));
-//        frame.add(new JLabel("15"));
-//        frame.add(new JLabel("16"));
-//        frame.add(new JLabel("17"));
-//        frame.add(new JLabel("18"));
-
-
-
-
 
 
     }
