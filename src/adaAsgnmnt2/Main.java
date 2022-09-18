@@ -41,7 +41,11 @@ public class Main
         totalLandValue = getLandPrice(x, y);
         //debug code
         System.out.println(totalLandValue);
-        exactMethod(x, y);
+        int xStart = 0;
+        int xEnd = x-1;
+        int yStart = 0;
+        int yEnd = y-1;
+        exactMethod(xStart, xEnd, yStart, yEnd);
     }
 
     private void bruteForceMethod(int x, int y)
@@ -143,37 +147,67 @@ public class Main
         //so this takes in the coordinates of a chunk of land in the array.
 
         boolean vertSplit = true;
-        int temp1X = xStart;
-        int temp1Y = yStart;
-        int temp2X = xEnd;
-        int temp2Y = yEnd;
-        int result1X = xStart;
-        int result2X = xStart;
-        int result1Y = yEnd;
-        int result2Y = yEnd;
+
+
+        //temp result values
+        int temp1XStart = xStart;
+        int temp1YStart = yStart;
+        int temp1XEnd = xEnd;
+        int temp1YEnd = yEnd;
+        int temp2XStart = xStart;
+        int temp2YStart = yStart;
+        int temp2XEnd = xEnd;
+        int temp2YEnd = yEnd;
+
+        //final result values
+        int result1XStart = xStart;
+        int result1XEnd = xEnd;
+        int result1YStart = yEnd;
+        int result1YEnd = yEnd;
+        int result2XStart = xStart;
+        int result2XEnd = xEnd;
+        int result2YStart = yEnd;
+        int result2YEnd = yEnd;
+
         int tempLandValue = totalLandValue;
         int currentHighestValue = totalLandValue;
 
         //area of current landplot:
-        int x = (xEnd - xStart);
-        int y = (yEnd - yStart);
+        //make sure to check to make sure 0's are accounted for TODO
+        int x = ((xEnd + 1) - (xStart + 1));
+        int y = ((yEnd + 1) - (yStart + 1));
 
         //subtract current chunk of land from value
         tempLandValue = totalLandValue - getLandPrice(x,y);
 
         //go through vertical splits
-        if (x > 1)
+        if (x > 1) //checks for if land is wider than one
         {
-            for (int l = 1; l < x; l++)
+            //this runs through vertical splits of the given chunk of land
+            //does this have the split in the right place? should I do xstart + 1? TODO
+            for (int l = xStart; l < xEnd; l++)
             {
-                temp1X = l;
-                temp2X = x - l;
-                temp1Y = y;
-                temp2Y = y;
+                //temp 1 is results to the left
+                temp1XStart = xStart;
+                temp1XEnd = l;
+                temp1YStart = yStart;
+                temp1YEnd = yEnd;
+
+                //temp 2 is results to the right
+                temp2XStart = l+1;
+                temp2XEnd = xEnd;
+                temp2YStart = yStart;
+                temp2YEnd = yEnd;
                 vertSplit = true;
 
+                //find area of each result
+                int temp1XArea = ((temp1XEnd + 1) - (temp1XStart + 1));
+                int temp1YArea = ((temp1YEnd + 1) - (temp1YStart + 1));
+                int temp2XArea = ((temp2XEnd + 1) - (temp2XStart + 1));
+                int temp2YArea = ((temp2YEnd + 1) - (temp2YStart + 1));
+
                 //for each split, add new value
-                tempLandValue = tempLandValue + (getLandPrice(result1X, result1Y) + getLandPrice(result2X, result2Y));
+                tempLandValue = tempLandValue + (getLandPrice(temp1XArea, temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
                 //reduce cost of split
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
@@ -181,10 +215,17 @@ public class Main
                 if (tempLandValue > currentHighestValue)
                 {
                     currentHighestValue = tempLandValue;
-                    result1X = temp1X;
-                    result1Y = temp1Y;
-                    result2X = temp2X;
-                    result2Y = temp1Y;
+                    //set result 1
+                    result1XStart = temp1XStart;
+                    result1YStart = temp1YStart;
+                    result1XEnd = temp1XEnd;
+                    result1YEnd = temp1YEnd;
+                    //set result 2
+                    result2XStart = temp2XStart;
+                    result2XEnd = temp2XEnd;
+                    result2YStart = temp2YStart;
+                    result2YEnd = temp2YEnd;
+
                 }
 
             }
@@ -193,39 +234,63 @@ public class Main
         //go through horizontal splits now
         if (y > 1)
         {
-            for (int w = 1; w < y; w++)
+            for (int w = yStart; w < yEnd; w++)
             {
-                temp1X = x;
-                temp2X = x;
-                temp1Y = w;
-                temp2Y = y-w;
+                //set x values as they don't change
+                temp1XStart = xStart;
+                temp2XStart = xStart;
+                temp1XEnd = xEnd;
+                temp2XEnd = xEnd;
+                //set y values
+                //temp 1 is above, temp 2 is below
+                temp1YStart = yStart;
+                temp1YEnd = w;
+
+                temp2YStart = w+1;
+                temp2YEnd = yEnd;
+
                 vertSplit = false;
 
+                //find area of each result
+                int temp1XArea = ((temp1XEnd + 1) - (temp1XStart + 1));
+                int temp1YArea = ((temp1YEnd + 1) - (temp1YStart + 1));
+                int temp2XArea = ((temp2XEnd + 1) - (temp2XStart + 1));
+                int temp2YArea = ((temp2YEnd + 1) - (temp2YStart + 1));
+
                 //for each split, add new value
-                tempLandValue = totalLandValue + (getLandPrice(result1X,result1Y) + getLandPrice(result2X, result2Y));
+                tempLandValue = totalLandValue + (getLandPrice(temp1XArea,temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
                 //reduce cost of split
                 tempLandValue = totalLandValue - subdivideCost(vertSplit, x, y);
 
                 if (tempLandValue > currentHighestValue)
                 {
                     currentHighestValue = tempLandValue;
-                    result1X = temp1X;
-                    result1Y = temp1Y;
-                    result2X = temp2X;
-                    result2Y = temp1Y;
+                    //set result 1
+                    result1XStart = temp1XStart;
+                    result1YStart = temp1YStart;
+                    result1XEnd = temp1XEnd;
+                    result1YEnd = temp1YEnd;
+                    //set result 2
+                    result2XStart = temp2XStart;
+                    result2XEnd = temp2XEnd;
+                    result2YStart = temp2YStart;
+                    result2YEnd = temp2YEnd;
                 }
             }
 
-            if ((result1X == x) && (result1Y == y))
+            //checks to see if result is the same as what was given
+            if ((result1XStart == xStart) && (result1YStart == yStart) && (result1YEnd == yEnd) && (result1XEnd == xEnd))
             {
                 return;
             }
 
             splitCounter++;
             //record current splits in data structure TODO
-            for (int a = (temp1X); a < landPlot.length; a++)
+
+            //apply to the landplot - the land to the bottom right of the split is the new increment up one
+            for (int a = (temp2XStart); a <= temp2XEnd; a++)
             {
-                for (int b = (temp1Y); b < landPlot[a].length; b++)
+                for (int b = (temp2YStart); b <= temp2YEnd; b++)
                 {
                     landPlot[a][b] = splitCounter;
                 }
@@ -236,8 +301,8 @@ public class Main
             //put snapshot of this and templandvalue in hashmap TODO
 
             //then do recursive method with our resultant splits
-            exactMethod(result1X, result1Y);
-            exactMethod(result2X, result2Y);
+            exactMethod(result1XStart, result1XEnd, result1YStart, result1YEnd);
+            exactMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
         }
 
 
