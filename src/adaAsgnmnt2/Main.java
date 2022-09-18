@@ -178,7 +178,7 @@ public class Main
         int y = ((yEnd + 1) - (yStart + 1));
 
         //subtract current chunk of land from value
-        tempLandValue = totalLandValue - getLandPrice(x,y);
+        int currentLandValue = totalLandValue - getLandPrice(x,y);
 
         //go through vertical splits
         if (x > 1) //checks for if land is wider than one
@@ -207,7 +207,7 @@ public class Main
                 int temp2YArea = ((temp2YEnd + 1) - (temp2YStart + 1));
 
                 //for each split, add new value
-                tempLandValue = tempLandValue + (getLandPrice(temp1XArea, temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
+                tempLandValue = currentLandValue + (getLandPrice(temp1XArea, temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
                 //reduce cost of split
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
@@ -258,7 +258,7 @@ public class Main
                 int temp2YArea = ((temp2YEnd + 1) - (temp2YStart + 1));
 
                 //for each split, add new value
-                tempLandValue = totalLandValue + (getLandPrice(temp1XArea,temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
+                tempLandValue = currentLandValue + (getLandPrice(temp1XArea,temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
                 //reduce cost of split
                 tempLandValue = totalLandValue - subdivideCost(vertSplit, x, y);
 
@@ -315,6 +315,10 @@ public class Main
 
     private int getLandPrice(int x, int y)
     {
+        if((x == 0) || (y == 0))
+        {
+            return 0;
+        }
         return landValue[x-1][y-1];
     }
 
