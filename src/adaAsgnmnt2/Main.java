@@ -233,7 +233,7 @@ public class Main
 
 
         //subtract current chunk of land from value
-        tempLandValue = totalLandValue - getLandPrice(x,y);
+        int currentLandValue = totalLandValue - getLandPrice(x,y);
 
         //go through vertical splits
         if (x > 0) //checks for if land is wider than one
@@ -264,6 +264,7 @@ public class Main
 
 
                 //for each split, add new value
+                tempLandValue = currentLandValue + (getLandPrice(temp1XArea, temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
                 tempLandValue = tempLandValue + (getLandPrice(temp1XArea, temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
 
                 //reduce cost of split
@@ -318,7 +319,7 @@ public class Main
                 int temp2YArea = ((temp2YEnd + 1) - (temp2YStart + 1));
 
                 //for each split, add new value
-                tempLandValue = totalLandValue + (getLandPrice(temp1XArea,temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
+                tempLandValue = currentLandValue + (getLandPrice(temp1XArea,temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
                 //reduce cost of split
                 tempLandValue = totalLandValue - subdivideCost(vertSplit, x, y);
 
@@ -358,6 +359,7 @@ public class Main
             System.out.println(splitCounter);
             //debug code here TODO for easier finding
             print2D(landPlot);
+
             //put snapshot of this and templandvalue in hashmap TODO
 
             //then do recursive method with our resultant splits
@@ -379,7 +381,8 @@ public class Main
         {
             return 0;
         }
-        return landValue[x][y];
+        return landValue[x-1][y-1];
+
     }
 
 
