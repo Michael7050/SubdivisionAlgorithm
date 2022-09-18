@@ -134,51 +134,60 @@ public class Main
     //Greedy Approach
 
     //Exact Approach
-    private void exactMethod(int x, int y)
+    private void exactMethod(int xStart, int xEnd, int yStart, int yEnd)
     {
         //this is an exact method
         //goes through each split, returns land value
         //takes highest value and continues with it.
 
+        //so this takes in the coordinates of a chunk of land in the array.
+
         boolean vertSplit = true;
-        int temp1X = x;
-        int temp1Y = y;
-        int temp2X = x;
-        int temp2Y = y;
-        int result1X = x;
-        int result2X = x;
-        int result1Y = y;
-        int result2Y = y;
+        int temp1X = xStart;
+        int temp1Y = yStart;
+        int temp2X = xEnd;
+        int temp2Y = yEnd;
+        int result1X = xStart;
+        int result2X = xStart;
+        int result1Y = yEnd;
+        int result2Y = yEnd;
         int tempLandValue = totalLandValue;
         int currentHighestValue = totalLandValue;
+
+        //area of current landplot:
+        int x = (xEnd - xStart);
+        int y = (yEnd - yStart);
 
         //subtract current chunk of land from value
         tempLandValue = totalLandValue - getLandPrice(x,y);
 
         //go through vertical splits
-        for (int l = 1; l < x; l++)
+        if (x > 1)
         {
-            temp1X = l;
-            temp2X = x-l;
-            temp1Y = y;
-            temp2Y = y;
-            vertSplit = true;
-
-            //for each split, add new value
-            tempLandValue = tempLandValue + (getLandPrice(result1X, result1Y) + getLandPrice(result2X, result2Y));
-            //reduce cost of split
-            tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
-
-            //if the split is the current best, save current split results to current best
-            if (tempLandValue > currentHighestValue)
+            for (int l = 1; l < x; l++)
             {
-                currentHighestValue = tempLandValue;
-                result1X = temp1X;
-                result1Y = temp1Y;
-                result2X = temp2X;
-                result2Y = temp1Y;
-            }
+                temp1X = l;
+                temp2X = x - l;
+                temp1Y = y;
+                temp2Y = y;
+                vertSplit = true;
 
+                //for each split, add new value
+                tempLandValue = tempLandValue + (getLandPrice(result1X, result1Y) + getLandPrice(result2X, result2Y));
+                //reduce cost of split
+                tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
+
+                //if the split is the current best, save current split results to current best
+                if (tempLandValue > currentHighestValue)
+                {
+                    currentHighestValue = tempLandValue;
+                    result1X = temp1X;
+                    result1Y = temp1Y;
+                    result2X = temp2X;
+                    result2Y = temp1Y;
+                }
+
+            }
         }
 
         //go through horizontal splits now
