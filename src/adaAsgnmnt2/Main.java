@@ -353,7 +353,7 @@ public class Main
             {
                 for (int b = (result2YStart); b < result2YEnd; b++)
                 {
-                    landPlot[a][b] = splitCounter;
+                    landPlot[b][a] = splitCounter;
                 }
             }
             System.out.println(splitCounter);
