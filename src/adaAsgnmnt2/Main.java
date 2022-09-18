@@ -96,9 +96,9 @@ public class Main
         //debug code
         System.out.println(totalLandValue);
         int xStart = 0;
-        int xEnd = x;
+        int xEnd = x+1;
         int yStart = 0;
-        int yEnd = y;
+        int yEnd = y+1;
         exactMethod(xStart, xEnd, yStart, yEnd);
     }
 
@@ -240,12 +240,11 @@ public class Main
         int currentLandValue = totalLandValue - getLandPrice(x,y);
 
         //go through vertical splits
-        if (x > 0) //checks for if land is wider than one
+        if (x > 1) //checks for if land is wider than one
         {
             //this runs through vertical splits of the given chunk of land
             //does this have the split in the right place? should I do xstart + 1? TODO
-            for (int l = xStart; l < xEnd + 1; l++)
-            {
+            for (int l = xStart+1; l < xEnd; l++) {
 //                System.out.println(l);
                 //temp 1 is results to the left
                 temp1XStart = xStart;
@@ -261,10 +260,10 @@ public class Main
                 vertSplit = true;
 
                 //find area of each result
-                int temp1XArea = ((temp1XEnd + 1) - (temp1XStart + 1));
-                int temp1YArea = ((temp1YEnd + 1) - (temp1YStart + 1));
-                int temp2XArea = ((temp2XEnd + 1) - (temp2XStart + 1));
-                int temp2YArea = ((temp2YEnd + 1) - (temp2YStart + 1));
+                int temp1XArea = ((temp1XEnd) - (temp1XStart));
+                int temp1YArea = ((temp1YEnd) - (temp1YStart));
+                int temp2XArea = ((temp2XEnd) - (temp2XStart));
+                int temp2YArea = ((temp2YEnd) - (temp2YStart));
 
 
                 //for each split, add new value
@@ -273,6 +272,7 @@ public class Main
 
                 //reduce cost of split
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
+
 
 
                 //if the split is the current best, save current split results to current best
@@ -298,7 +298,7 @@ public class Main
         //go through horizontal splits now
         if (y > 0)
         {
-            for (int w = yStart; w < yEnd; w++)
+            for (int w = yStart+1; w <= yEnd; w++)
             {
                 //set x values as they don't change
                 temp1XStart = xStart;
@@ -311,16 +311,16 @@ public class Main
                 temp1YStart = yStart;
                 temp1YEnd = w;
 
-                temp2YStart = w+1;
+                temp2YStart = w;
                 temp2YEnd = yEnd;
 
                 vertSplit = false;
 
                 //find area of each result
-                int temp1XArea = ((temp1XEnd + 1) - (temp1XStart + 1));
-                int temp1YArea = ((temp1YEnd + 1) - (temp1YStart + 1));
-                int temp2XArea = ((temp2XEnd + 1) - (temp2XStart + 1));
-                int temp2YArea = ((temp2YEnd + 1) - (temp2YStart + 1));
+                int temp1XArea = ((temp1XEnd) - (temp1XStart));
+                int temp1YArea = ((temp1YEnd) - (temp1YStart));
+                int temp2XArea = ((temp2XEnd) - (temp2XStart));
+                int temp2YArea = ((temp2YEnd) - (temp2YStart));
 
                 //for each split, add new value
                 tempLandValue = currentLandValue + (getLandPrice(temp1XArea,temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
@@ -353,15 +353,11 @@ public class Main
             //record current splits in data structure TODO
 
             //apply to the landplot - the land to the bottom right of the split is the new increment up one
-            for (int a = (temp2XStart); a < temp2XEnd; a++)
+            for (int a = (result2XStart); a < result2XEnd; a++)
             {
-                System.out.println("here");
-                System.out.println(a);
-                for (int b = (temp2YStart); b < temp2YEnd; b++)
+                for (int b = (result2YStart); b < result2YEnd; b++)
                 {
-                    System.out.println("here");
-                    System.out.println(a + " - " + b);
-                    landPlot[a][b] = splitCounter;
+                    landPlot[b][a] = splitCounter;
                 }
             }
             System.out.println(splitCounter);
@@ -372,7 +368,7 @@ public class Main
 
             //then do recursive method with our resultant splits
             exactMethod(result1XStart, result1XEnd, result1YStart, result1YEnd);
-//            exactMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
+            exactMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
         }
 
 
@@ -425,7 +421,7 @@ public class Main
     }
 
     //gui
-    public static void GUI() {
+    /*public static void GUI() {
         final int rows = 3;
         final int col = 6;
 
@@ -502,7 +498,7 @@ public class Main
         frame.add(label19);
 
 
-    }
+    //}
 
 
 
