@@ -14,8 +14,8 @@ public class Main
 
     //initialise cost for subdividing a metre of land, and number of divides we want,
     //also initialising our bits of land
-    private static int cost = 50;
-    static int height = 3;
+    private static int cost = 5;
+    static int height = 6;
     static int length = 6;
     private int initialLandValue = 0;
     public int currentLandValue = 0;
