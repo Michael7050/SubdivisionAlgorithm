@@ -93,7 +93,7 @@ public class Main
 
     private void exactSolution(int x, int y)
     {
-        initialLandValue = getLandPrice(x, y);
+        initialLandValue = getLandPrice(x + 1, y + 1);
         currentLandValue = initialLandValue;
         //debug code
         System.out.println(initialLandValue);
@@ -514,5 +514,3 @@ public class Main
 
 
 }
-
-
