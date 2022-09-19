@@ -238,7 +238,6 @@ public class Main
 
         //subtract current chunk of land from value
         int currentLandValue = totalLandValue - getLandPrice(x,y);
-
         //go through vertical splits
         if (x > 1) //checks for if land is wider than one
         {
@@ -296,10 +295,8 @@ public class Main
         }
 
         //go through horizontal splits now
-        if (y > 0)
-        {
-            for (int w = yStart+1; w <= yEnd; w++)
-            {
+        if (y > 0) {
+            for (int w = yStart + 1; w <= yEnd; w++) {
                 //set x values as they don't change
                 temp1XStart = xStart;
                 temp2XStart = xStart;
@@ -323,12 +320,11 @@ public class Main
                 int temp2YArea = ((temp2YEnd) - (temp2YStart));
 
                 //for each split, add new value
-                tempLandValue = currentLandValue + (getLandPrice(temp1XArea,temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
+                tempLandValue = currentLandValue + (getLandPrice(temp1XArea, temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
                 //reduce cost of split
                 tempLandValue = totalLandValue - subdivideCost(vertSplit, x, y);
 
-                if (tempLandValue > currentHighestValue)
-                {
+                if (tempLandValue > currentHighestValue) {
                     currentHighestValue = tempLandValue;
                     //set result 1
                     result1XStart = temp1XStart;
@@ -342,6 +338,7 @@ public class Main
                     result2YEnd = temp2YEnd;
                 }
             }
+        }
 
             //checks to see if result is the same as what was given
             if ((result1XStart == xStart) && (result1YStart == yStart) && (result1YEnd == yEnd) && (result1XEnd == xEnd))
@@ -375,7 +372,7 @@ public class Main
 
 
         //if result1x = x and result1y = y, then no split, and return
-    }
+
 
     //print out array for debugging
 
@@ -406,22 +403,18 @@ public class Main
 
     //Method to calculate the cost of a subdivide cost
     //if split is vertical, cost is times x, if not cost is times y;
-    private int subdivideCost(boolean vertSplit, int x, int y)
-    {
+    private int subdivideCost(boolean vertSplit, int x, int y) {
         int result;
-        if (vertSplit)
-        {
+        if (vertSplit) {
             result = x;
-        }
-        else
-        {
+        } else {
             result = y;
         }
         return (result * cost);
     }
 
     //gui
-    /*public static void GUI() {
+    public static void GUI() {
         final int rows = 3;
         final int col = 6;
 
@@ -498,7 +491,7 @@ public class Main
         frame.add(label19);
 
 
-    //}
+    }
 
 
 
@@ -515,4 +508,8 @@ public class Main
         }
         System.out.println();
     }
+
+
 }
+
+
