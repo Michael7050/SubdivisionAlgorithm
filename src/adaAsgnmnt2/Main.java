@@ -14,8 +14,8 @@ public class Main
 
     //initialise cost for subdividing a metre of land, and number of divides we want,
     //also initialising our bits of land
-    private static int cost = 50;
-    static int height = 3;
+    private static int cost = 5;
+    static int height = 6;
     static int length = 6;
     private int initialLandValue = 0;
     public int currentLandValue = 0;
@@ -93,7 +93,8 @@ public class Main
 
     private void exactSolution(int x, int y)
     {
-        initialLandValue = getLandPrice(x + 1, y + 1);
+        //takes in a chunk of land XY
+        initialLandValue = getLandPrice(x, y);
         
         currentLandValue = initialLandValue;
         //debug code
