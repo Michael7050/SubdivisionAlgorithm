@@ -14,7 +14,8 @@ public class Main
     private static int cost = 50;
     static int height = 3;
     static int length = 6;
-    private int totalLandValue = 0;
+    private int initialLandValue = 0;
+    public int currentLandValue = 0;
     private int splitCounter = 0;
     int[][] landPlot = new int[height][length];
 
@@ -82,16 +83,17 @@ public class Main
 
     private void bruteForce(int x, int y)
     {
-        totalLandValue = getLandPrice(x, y);
+        initialLandValue = getLandPrice(x, y);
         bruteForceMethod(x, y);
         //then traverse data structure and return result with highest data value.
     }
 
     private void exactSolution(int x, int y)
     {
-        totalLandValue = getLandPrice(x, y);
+        initialLandValue = getLandPrice(x, y);
+        currentLandValue = initialLandValue;
         //debug code
-        System.out.println(totalLandValue);
+        System.out.println(initialLandValue);
         int xStart = 0;
         int xEnd = x+1;
         int yStart = 0;
@@ -102,7 +104,7 @@ public class Main
     private void bruteForceMethod(int x, int y)
     {
         //first reduce the total value by what we are given -
-        totalLandValue = totalLandValue - getLandPrice(x, y);
+        initialLandValue = initialLandValue - getLandPrice(x, y);
 
         int result1X = x;
         int result2X = x;
@@ -125,9 +127,9 @@ public class Main
                 verticalSplit = true;
 
                 //for each split, add new value
-                totalLandValue = totalLandValue + (getLandPrice(result1X, result1Y) + getLandPrice(result2X, result2Y));
+                initialLandValue = initialLandValue + (getLandPrice(result1X, result1Y) + getLandPrice(result2X, result2Y));
                 //reduce cost of split
-                totalLandValue = totalLandValue - subdivideCost(verticalSplit, x, y);
+                initialLandValue = initialLandValue - subdivideCost(verticalSplit, x, y);
 
                 //record new values in arraylist(?) TODO
 
@@ -150,9 +152,9 @@ public class Main
                 verticalSplit = false;
 
                 //for each split, add new value
-                totalLandValue = totalLandValue + (landValue[result1X][result1Y] + landValue[result2X][result2Y]);
+                initialLandValue = initialLandValue + (landValue[result1X][result1Y] + landValue[result2X][result2Y]);
                 //reduce cost of split
-                totalLandValue = totalLandValue - subdivideCost(verticalSplit, x, y);
+                initialLandValue = initialLandValue - subdivideCost(verticalSplit, x, y);
 
                 //record new values in arraylist(?) TODO
                 bruteForceMethod(result1X, result1Y);
@@ -220,20 +222,13 @@ public class Main
         int result2YStart = yEnd;
         int result2YEnd = yEnd;
 
-        int tempLandValue = totalLandValue;
-        int currentHighestValue = totalLandValue;
-
-
+        int currentHighestValue = currentLandValue;
 
         //area of current landplot:
         //make sure to check to make sure 0's are accounted for TODO
         int x = ((xEnd) - (xStart));
         int y = ((yEnd) - (yStart));
 
-
-
-        //subtract current chunk of land from value
-        int currentLandValue = totalLandValue - getLandPrice(x,y);
 
         //go through vertical splits
         if (x > 1) //checks for if land is wider than one
@@ -261,11 +256,10 @@ public class Main
                 int temp2XArea = ((temp2XEnd) - (temp2XStart));
                 int temp2YArea = ((temp2YEnd) - (temp2YStart));
 
-
+                //subtract current chunk of land from value
+                int tempLandValue = currentLandValue - getLandPrice(x,y);
                 //for each split, add new value
-                tempLandValue = currentLandValue + (getLandPrice(temp1XArea, temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
                 tempLandValue = tempLandValue + (getLandPrice(temp1XArea, temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
-
                 //reduce cost of split
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
@@ -292,10 +286,8 @@ public class Main
         }
 
         //go through horizontal splits now
-        if (y > 0)
-        {
-            for (int w = yStart+1; w <= yEnd; w++)
-            {
+        if (y > 0) {
+            for (int w = yStart + 1; w < yEnd; w++) {
                 //set x values as they don't change
                 temp1XStart = xStart;
                 temp2XStart = xStart;
@@ -318,13 +310,14 @@ public class Main
                 int temp2XArea = ((temp2XEnd) - (temp2XStart));
                 int temp2YArea = ((temp2YEnd) - (temp2YStart));
 
+                //subtract current chunk of land from value
+                int tempLandValue = currentLandValue - getLandPrice(x,y);
                 //for each split, add new value
-                tempLandValue = currentLandValue + (getLandPrice(temp1XArea,temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
+                tempLandValue = tempLandValue + (getLandPrice(temp1XArea, temp1YArea) + getLandPrice(temp2XArea, temp2YArea));
                 //reduce cost of split
-                tempLandValue = totalLandValue - subdivideCost(vertSplit, x, y);
+                tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
-                if (tempLandValue > currentHighestValue)
-                {
+                if (tempLandValue > currentHighestValue) {
                     currentHighestValue = tempLandValue;
                     //set result 1
                     result1XStart = temp1XStart;
@@ -338,40 +331,44 @@ public class Main
                     result2YEnd = temp2YEnd;
                 }
             }
+        }
 
             //checks to see if result is the same as what was given
-            if ((result1XStart == xStart) && (result1YStart == yStart) && (result1YEnd == yEnd) && (result1XEnd == xEnd))
+            if (currentHighestValue == currentLandValue)
             {
                 return;
             }
+            else {
 
-            splitCounter++;
-            //record current splits in data structure TODO
+                splitCounter++;
+                //record current splits in data structure TODO
 
-            //apply to the landplot - the land to the bottom right of the split is the new increment up one
-            for (int a = (result2XStart); a < result2XEnd; a++)
-            {
-                for (int b = (result2YStart); b < result2YEnd; b++)
-                {
-                    landPlot[b][a] = splitCounter;
+                //apply to the landplot - the land to the bottom right of the split is the new increment up one
+                for (int a = (result2XStart); a < result2XEnd; a++) {
+                    for (int b = (result2YStart); b < result2YEnd; b++) {
+                        landPlot[b][a] = splitCounter;
+                    }
                 }
+                currentLandValue = currentHighestValue;
+                System.out.println(splitCounter);
+                System.out.println(currentLandValue);
+                //debug code here TODO for easier finding
+                print2D(landPlot);
+
+
+                //put snapshot of this and templandvalue in hashmap TODO
+
+                //then do recursive method with our resultant splits
+                exactMethod(result1XStart, result1XEnd, result1YStart, result1YEnd);
+                exactMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
             }
-            System.out.println(splitCounter);
-            //debug code here TODO for easier finding
-            print2D(landPlot);
-
-            //put snapshot of this and templandvalue in hashmap TODO
-
-            //then do recursive method with our resultant splits
-            exactMethod(result1XStart, result1XEnd, result1YStart, result1YEnd);
-            exactMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
         }
 
 
 
 
         //if result1x = x and result1y = y, then no split, and return
-    }
+
 
     //print out array for debugging
 
@@ -407,11 +404,11 @@ public class Main
         int result;
         if (vertSplit)
         {
-            result = x;
+            result = y;
         }
         else
         {
-            result = y;
+            result = x;
         }
         return (result * cost);
     }
