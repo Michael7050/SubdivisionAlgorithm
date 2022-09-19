@@ -1,5 +1,8 @@
 package adaAsgnmnt2;
 
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.*;
 
@@ -90,8 +93,8 @@ public class Main
 
     private void exactSolution(int x, int y)
     {
-        //takes in a chunk of land of x by y
-        initialLandValue = getLandPrice(x, y);
+        initialLandValue = getLandPrice(x + 1, y + 1);
+        
         currentLandValue = initialLandValue;
         //debug code
         System.out.println(initialLandValue);
@@ -415,7 +418,7 @@ public class Main
     }
 
     //gui
-    /*public static void GUI() {
+    public static void GUI() {
         final int rows = 3;
         final int col = 6;
 
@@ -490,35 +493,9 @@ public class Main
         frame.add(label18);
         label18.setBorder(border);
         frame.add(label19);
-*/
-//        frame.
 
 
-//        frame.add(new JLabel("1"));
-//        frame.add(new JLabel("2"));
-//        frame.add(new JLabel("3"));
-//        frame.add(new JLabel("4"));
-//        frame.add(new JLabel("5"));
-//        frame.add(new JLabel("6"));
-//        frame.add(new JLabel("7"));
-//        frame.add(new JLabel("8"));
-//        frame.add(new JLabel("9"));
-//        frame.add(new JLabel("10"));
-//        frame.add(new JLabel("11"));
-//        frame.add(new JLabel("12"));
-//        frame.add(new JLabel("13"));
-//        frame.add(new JLabel("14"));
-//        frame.add(new JLabel("15"));
-//        frame.add(new JLabel("16"));
-//        frame.add(new JLabel("17"));
-//        frame.add(new JLabel("18"));
-
-
-
-
-
-
-    //}
+    }
 
 
 
@@ -535,4 +512,6 @@ public class Main
         }
         System.out.println();
     }
+
+
 }
