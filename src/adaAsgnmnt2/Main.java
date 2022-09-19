@@ -79,7 +79,7 @@ public class Main
 //
 //        System.out.println(Arrays.deepToString(area));
 
-        main.exactSolution(plotx - 1, ploty - 1);
+        main.exactSolution(plotx, ploty);
     }
 
     //Brute Force
@@ -94,13 +94,14 @@ public class Main
     private void exactSolution(int x, int y)
     {
         initialLandValue = getLandPrice(x + 1, y + 1);
+        
         currentLandValue = initialLandValue;
         //debug code
         System.out.println(initialLandValue);
         int xStart = 0;
-        int xEnd = x+1;
+        int xEnd = x;
         int yStart = 0;
-        int yEnd = y+1;
+        int yEnd = y;
         exactMethod(xStart, xEnd, yStart, yEnd);
     }
 
