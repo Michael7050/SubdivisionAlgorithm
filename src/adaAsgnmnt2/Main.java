@@ -84,11 +84,37 @@ public class Main
 
     //Brute Force
 
-    private void bruteForce(int x, int y)
-    {
-        initialLandValue = getLandPrice(x, y);
-        bruteForceMethod(x, y);
-        //then traverse data structure and return result with highest data value.
+    //TODO
+    //create a value for when it isn't splitting and save
+    //track land value
+
+    public void bruteForce(int x, int y) {
+        //this should be a working brute force method, that goes through each combination i think.
+
+        int tempLandValue = landValue[x][y];
+
+        //debug code here
+        System.out.println(tempLandValue);
+
+        //do i take a snapshot here?
+
+        if (x < 1) {
+            for (int a = 1; a < x; a++) {
+                bruteForce(a, y);
+                //take a snapshot here?
+                bruteForce((x - a), y);
+                //take a snapshot here?
+            }
+        }
+
+        if (y < 1) {
+            for (int b = 1; b < y; b++) {
+                bruteForce(b, x);
+                //take a snapshot here?
+                bruteForce((y - b), x);
+                //take a snapshot here?
+            }
+        }
     }
 
     private void exactSolution(int x, int y)
