@@ -93,7 +93,8 @@ public class Main
 
     private void exactSolution(int x, int y)
     {
-        initialLandValue = getLandPrice(x + 1, y + 1);
+        //takes in a chunk of land XY
+        initialLandValue = getLandPrice(x, y);
         
         currentLandValue = initialLandValue;
         //debug code
