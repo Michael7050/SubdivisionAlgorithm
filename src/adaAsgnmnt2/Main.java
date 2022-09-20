@@ -85,25 +85,25 @@ public class Main
         System.out.println(currentBestValue);
         print2D(currentBestPlot);
         //do i take a snapshot here?
+        int[] row1 = currentBestPlot[0];
+        int[] row2 = currentBestPlot[1];
+        int[] row3 = currentBestPlot[2];
+        int[] row4 = currentBestPlot[3];
+        int[] row5 = currentBestPlot[4];
+        int[] row6 = currentBestPlot[5];
+        int[] value = {currentBestValue, 0, 0, 0, 0, 0};
+
+        GUI(row1, row2, row3, row4, row5, row6, value);
     }
     //greedy
     private void greedySolution(int x, int y){
-    }
 
-
-
-    private void exactSolution(int x, int y)
-    {
-        //takes in land to subdivide
         initialLandValue = getLandPrice(x, y);
-
         currentLandValue = initialLandValue;
 
         int xStart = 0;
-        int xEnd = x;
         int yStart = 0;
-        int yEnd = y;
-        greedyMethod(xStart, xEnd, yStart, yEnd);
+        greedyMethod(xStart, x, yStart, y);
 
         int[] row1 = landPlot[0];
         int[] row2 = landPlot[1];
@@ -115,6 +115,7 @@ public class Main
 
         GUI(row1, row2, row3, row4, row5, row6, value);
     }
+
 
     //exact
     private void exactSolution(int x, int y) {
@@ -422,8 +423,7 @@ public class Main
     }
 
     //Greedy Approach
-    private void greedyMethod(int xStart, int xEnd, int yStart, int yEnd)
-    {
+    private void greedyMethod(int xStart, int xEnd, int yStart, int yEnd) {
         //this is the greedy method
         //goes through each split, returns land value
         //takes highest value and continues with it.
@@ -466,8 +466,7 @@ public class Main
         {
             //this runs through vertical splits of the given chunk of land
             //does this have the split in the right place? should I do xstart + 1? TODO
-            for (int l = xStart + 1; l < xEnd; l++)
-            {
+            for (int l = xStart + 1; l < xEnd; l++) {
 //                System.out.println(l);
                 //temp 1 is results to the left
                 temp1XStart = xStart;
@@ -496,10 +495,8 @@ public class Main
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
 
-
                 //if the split is the current best, save current split results to current best
-                if (tempLandValue > currentHighestValue)
-                {
+                if (tempLandValue > currentHighestValue) {
                     currentHighestValue = tempLandValue;
                     //set result 1
                     result1XStart = temp1XStart;
@@ -518,10 +515,8 @@ public class Main
         }
 
         //go through horizontal splits now
-        if (y > 0)
-        {
-            for (int w = yStart + 1; w < yEnd; w++)
-            {
+        if (y > 0) {
+            for (int w = yStart + 1; w < yEnd; w++) {
                 //set x values as they don't change
                 temp1XStart = xStart;
                 temp2XStart = xStart;
@@ -551,8 +546,7 @@ public class Main
                 //reduce cost of split
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
-                if (tempLandValue > currentHighestValue)
-                {
+                if (tempLandValue > currentHighestValue) {
                     currentHighestValue = tempLandValue;
                     //set result 1
                     result1XStart = temp1XStart;
@@ -568,46 +562,39 @@ public class Main
             }
         }
 
-            //checks to see if result is the same as what was given
-            if (currentHighestValue == currentLandValue)
-            {
-
-            }
-            else {
         //checks to see if result is the same as what was given
-        if (currentHighestValue == currentLandValue)
-        {
-            return;
-        }
-        else
-        {
+        if (currentHighestValue == currentLandValue) {
 
-            splitCounter++;
-            //record current splits in data structure TODO
+        } else {
+            //checks to see if result is the same as what was given
+            if (currentHighestValue == currentLandValue) {
+                return;
+            } else {
 
-            //apply to the landplot - the land to the bottom right of the split is the new increment up one
-            for (int a = (result2XStart); a < result2XEnd; a++)
-            {
-                for (int b = (result2YStart); b < result2YEnd; b++)
-                {
-                    landPlot[b][a] = splitCounter;
+                splitCounter++;
+                //record current splits in data structure TODO
+
+                //apply to the landplot - the land to the bottom right of the split is the new increment up one
+                for (int a = (result2XStart); a < result2XEnd; a++) {
+                    for (int b = (result2YStart); b < result2YEnd; b++) {
+                        landPlot[b][a] = splitCounter;
+                    }
                 }
-            }
-            currentLandValue = currentHighestValue;
-            System.out.println(splitCounter);
-            System.out.println(currentLandValue);
-            //debug code here TODO for easier finding
-            print2D(landPlot);
+                currentLandValue = currentHighestValue;
+                System.out.println(splitCounter);
+                System.out.println(currentLandValue);
+                //debug code here TODO for easier finding
+                print2D(landPlot);
 
 
-            //put snapshot of this and templandvalue in hashmap TODO
+                //put snapshot of this and templandvalue in hashmap TODO
 
                 //then do recursive method with our resultant splits
                 greedyMethod(result1XStart, result1XEnd, result1YStart, result1YEnd);
                 greedyMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
             }
         }
-
+    }
     //print out array for debugging
 
     private int getLandPrice(int x, int y)
