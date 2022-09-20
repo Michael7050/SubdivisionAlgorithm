@@ -90,7 +90,7 @@ public class Main {
     public void bruteForce(int x, int y) {
         //this should be a working brute force method, that goes through each combination i think.
 
-        currentLandValue = landValue[x][y];
+        currentLandValue = landValue[x - 1][y - 1];
         initialLandValue = currentLandValue;
         splitCounter = 0;
         //debug code here
@@ -101,7 +101,7 @@ public class Main {
         int yStart = 0;
         int yEnd = y;
 
-        bruteForceMethod(xStart,xEnd,yStart,yEnd);
+        bruteForceMethod(xStart,xEnd,yStart,yEnd, splitCounter, currentLandValue);
 
         //do i take a snapshot here?
     }
@@ -124,8 +124,9 @@ public class Main {
     }
 
 
-    private void bruteForceMethod(int xStart, int xEnd, int yStart, int yEnd)
+    private void bruteForceMethod(int xStart, int xEnd, int yStart, int yEnd, int splitCount, int value)
     {
+        splitCount++;
 
         boolean vertSplit = true;
         //temp result values
@@ -167,24 +168,24 @@ public class Main {
                 int result2YArea = ((result2YEnd) - (result2YStart));
 
                 //subtract current chunk of land from value
-                int tempLandValue = currentLandValue - getLandPrice(x,y);
+                int tempLandValue = value - getLandPrice(x,y);
                 //for each split, add new value
                 tempLandValue = tempLandValue + (getLandPrice(result1XArea, result1YArea) + getLandPrice(result2XArea, result2YArea));
                 //reduce cost of split
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
                 //TODO - function here that prints current landarray and value
-                updateArray(result2XStart, result2XEnd, result2YStart, result2YEnd);
-                //System.out.println(currentValue);
+                updateArray(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount);
+                System.out.println(tempLandValue);
 
-                bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd);
-                bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
+                bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue);
+                bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, tempLandValue);
 
             }
         }
 
         //go through horizontal splits now
-        if (y > 0) {
+        if (y > 1) {
             for (int w = yStart + 1; w < yEnd; w++) {
                 //set x values as they don't change
                 result1XStart = xStart;
@@ -209,20 +210,21 @@ public class Main {
                 int result2YArea = ((result2YEnd) - (result2YStart));
 
                 //subtract current chunk of land from value
-                int tempLandValue = currentLandValue - getLandPrice(x,y);
+                int tempLandValue = value - getLandPrice(x,y);
                 //for each split, add new value
                 tempLandValue = tempLandValue + (getLandPrice(result1XArea, result1YArea) + getLandPrice(result2XArea, result2YArea));
                 //reduce cost of split
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
                 //TODO - function here that prints current landarray and value
+                System.out.println(tempLandValue);
+                updateArray(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount);
 
-                bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd);
-                bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
+                bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue);
+                bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, tempLandValue);
 
             }
         }
-
     }
 
     //Greedy Approach
@@ -546,19 +548,17 @@ public class Main {
         System.out.println();
     }
 
-    public void updateArray(int xStart, int xEnd, int yStart, int yEnd)
+    public void updateArray(int xStart, int xEnd, int yStart, int yEnd, int splitCount)
     {
-        splitCounter++;
         //record current splits in data structure TODO
 
         //apply to the landplot - the land to the bottom right of the split is the new increment up one
         for (int a = (xStart); a < xEnd; a++) {
             for (int b = (yStart); b < yEnd; b++) {
-                landPlot[b][a] = splitCounter;
+                landPlot[b][a] = splitCount;
             }
         }
-        System.out.println(splitCounter);
-        System.out.println(currentLandValue);
+        System.out.println(splitCount);
         //debug code here TODO for easier finding
         print2D(landPlot);
     }
