@@ -3,7 +3,6 @@ package adaAsgnmnt2;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.sql.SQLOutput;
 import java.util.Arrays;
 import java.util.*;
 
@@ -31,15 +30,7 @@ public class Main
 
     public static void main(String[] args)
     {
-
-//        GUI();
-
-        //test method for checking array
-        //arrayToString(landValue);
         Main main = new Main();
-        int plotx = length;
-        int ploty = height;
-
         System.out.println("Press 1 for bruteforce, \nPress 2 for greedy, \nPress 3 for exact");
         Scanner scanner = new Scanner(System.in);
         String run = scanner.next();
@@ -55,15 +46,9 @@ public class Main
     }
 
     //Brute Force
-
-    //TODO
-    //create a value for when it isn't splitting and save
-    //track land value
-
     public void bruteForce(int x, int y)
     {
         //this should be a working brute force method, that goes through each combination i think.
-
         currentLandValue = getLandPrice(x, y);
         initialLandValue = currentLandValue;
         splitCounter = 0;
@@ -84,7 +69,7 @@ public class Main
         System.out.println("Current best Value, and Plot");
         System.out.println(currentBestValue);
         print2D(currentBestPlot);
-        //do i take a snapshot here?
+
         int[] row1 = currentBestPlot[0];
         int[] row2 = currentBestPlot[1];
         int[] row3 = currentBestPlot[2];
@@ -92,9 +77,9 @@ public class Main
         int[] row5 = currentBestPlot[4];
         int[] row6 = currentBestPlot[5];
         int[] value = {currentBestValue, 0, 0, 0, 0, 0};
-
         GUI(row1, row2, row3, row4, row5, row6, value);
     }
+
     //greedy
     private void greedySolution(int x, int y){
 
@@ -112,10 +97,8 @@ public class Main
         int[] row5 = landPlot[4];
         int[] row6 = landPlot[5];
         int[] value = {currentLandValue, 0, 0, 0, 0, 0};
-
         GUI(row1, row2, row3, row4, row5, row6, value);
     }
-
 
     //exact
     private void exactSolution(int x, int y) {
@@ -134,13 +117,11 @@ public class Main
         int[] row5 = landPlot[4];
         int[] row6 = landPlot[5];
         int[] value = {currentLandValue, 0, 0, 0, 0, 0};
-
         GUI(row1, row2, row3, row4, row5, row6, value);
     }
 
     private void exactMethod(int xStart, int xEnd, int yStart, int yEnd) {
         boolean vertSplit = true;
-
 
         //temp result values
         int temp1XStart = xStart;
@@ -165,18 +146,14 @@ public class Main
         int currentHighestValue = currentLandValue;
 
         //area of current landplot:
-        //make sure to check to make sure 0's are accounted for TODO
         int x = ((xEnd) - (xStart));
         int y = ((yEnd) - (yStart));
-
 
         //go through vertical splits
         if (x > 1) //checks for if land is wider than one
         {
             //this runs through vertical splits of the given chunk of land
-            //does this have the split in the right place? should I do xstart + 1? TODO
             for (int l = xStart+1; l < xEnd; l++) {
-//                System.out.println(l);
                 //temp 1 is results to the left
                 temp1XStart = xStart;
                 temp1XEnd = l;
@@ -203,8 +180,6 @@ public class Main
                 //reduce cost of split
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
-
-
                 //if the split is the current best, save current split results to current best
                 if (tempLandValue > currentHighestValue)
                 {
@@ -221,7 +196,6 @@ public class Main
                     result2YEnd = temp2YEnd;
 
                 }
-
             }
         }
 
@@ -274,15 +248,9 @@ public class Main
         }
 
         //checks to see if result is the same as what was given
-        if (currentHighestValue == currentLandValue)
-        {
-
-        }
-        else {
+        if (currentHighestValue != currentLandValue) {
 
             splitCounter++;
-            //record current splits in data structure TODO
-
             //apply to the landplot - the land to the bottom right of the split is the new increment up one
             for (int a = (result2XStart); a < result2XEnd; a++) {
                 for (int b = (result2YStart); b < result2YEnd; b++) {
@@ -290,19 +258,14 @@ public class Main
                 }
             }
             currentLandValue = currentHighestValue;
-            //debug code here TODO for easier finding
-//                System.out.println(splitCounter);
+
             System.out.println(currentLandValue);
             print2D(landPlot);
-
-
-            //put snapshot of this and templandvalue in hashmap TODO
 
             //then do recursive method with our resultant splits
             exactMethod(result1XStart, result1XEnd, result1YStart, result1YEnd);
             exactMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
         }
-
     }
 
 
@@ -329,10 +292,8 @@ public class Main
 
         if (x > 1) //checks for if land is wider than one
         {
-
             for (int l = xStart + 1; l < xEnd; l++)
             {
-
                 result1XStart = xStart;
                 result1XEnd = l;
                 result1YStart = yStart;
@@ -358,7 +319,7 @@ public class Main
                 //reduce cost of split
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
-                //TODO - function here that prints current landarray and value to arraylist
+                //function here that prints current land array and value to arraylist
                 System.out.println("Splitting vertically first: ");
                 System.out.println("Land value: " + tempLandValue);
                 updateFloatingArray(result2XStart, result2XEnd, result2YStart, result2YEnd, result1XStart, result1XEnd, result1YStart, result1YEnd, floatingLandPlot, tempLandValue);
@@ -370,7 +331,6 @@ public class Main
 
                 //bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue, floatingLandPlot);
                 bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, tempLandValue, floatingLandPlot);
-
             }
         }
 
@@ -408,7 +368,7 @@ public class Main
                 //reduce cost of split
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
-                //TODO - function here that prints current landarray and value
+                //function here that prints current landarray and value
                 System.out.println("Splitting Horizontally second:");
                 updateFloatingArray(result2XStart, result2XEnd, result2YStart, result2YEnd, result1XStart, result1XEnd, result1YStart, result1YEnd, floatingLandPlot, tempLandValue);
                 print2D(floatingLandPlot);
@@ -417,7 +377,6 @@ public class Main
 
                 //bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue, floatingLandPlot);
                 bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, tempLandValue, floatingLandPlot);
-
             }
         }
     }
@@ -431,7 +390,6 @@ public class Main
         //so this takes in the coordinates of a chunk of land in the array.
 
         boolean vertSplit = true;
-
 
         //temp result values
         int temp1XStart = xStart;
@@ -456,7 +414,6 @@ public class Main
         int currentHighestValue = currentLandValue;
 
         //area of current landplot:
-        //make sure to check to make sure 0's are accounted for TODO
         int x = ((xEnd) - (xStart));
         int y = ((yEnd) - (yStart));
 
@@ -465,7 +422,6 @@ public class Main
         if (x > 1) //checks for if land is wider than one
         {
             //this runs through vertical splits of the given chunk of land
-            //does this have the split in the right place? should I do xstart + 1? TODO
             for (int l = xStart + 1; l < xEnd; l++) {
 //                System.out.println(l);
                 //temp 1 is results to the left
@@ -494,7 +450,6 @@ public class Main
                 //reduce cost of split
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
-
                 //if the split is the current best, save current split results to current best
                 if (tempLandValue > currentHighestValue) {
                     currentHighestValue = tempLandValue;
@@ -508,9 +463,7 @@ public class Main
                     result2XEnd = temp2XEnd;
                     result2YStart = temp2YStart;
                     result2YEnd = temp2YEnd;
-
                 }
-
             }
         }
 
@@ -596,7 +549,6 @@ public class Main
         }
     }
     //print out array for debugging
-
     private int getLandPrice(int x, int y)
     {
         if ((x == 0) || (y == 0))
@@ -604,22 +556,6 @@ public class Main
             return 0;
         }
         return landValue[x - 1][y - 1];
-
-    }
-
-
-//    private int getLandPrice(int x, int y)
-//    {
-////        System.out.println(landValue[x][y]);
-//        return landValue[x][y];
-//    }
-
-    private static void arrayToString(int[][] x)
-    {
-        for (int n = 0; n < x.length; n++)
-        {
-            System.out.println(Arrays.toString(x[n]));
-        }
     }
 
     //Method to calculate the cost of a subdivide cost
@@ -833,21 +769,18 @@ public class Main
         frame.add(totalvalue);
     }
 
-    //code from stackoverflow to print out 2d array for bugtesting.
+    //code from stackoverflow to print out 2d array for bug testing.
     public static void print2D(int[][] mat)
     {
         for (int[] row : mat)
         {
-
-            // converting each row as string
-            // and then printing in a separate line
             System.out.println(Arrays.toString(row));
         }
     }
 
     public void updateArray(int xStart, int xEnd, int yStart, int yEnd, int splitCount)
     {
-        //record current splits in data structure TODO
+        //record current splits in data structure
 
         //apply to the landplot - the land to the bottom right of the split is the new increment up one
         for (int a = (xStart); a < xEnd; a++)
@@ -858,7 +791,7 @@ public class Main
             }
         }
         System.out.println("Split depth " + splitCount);
-        //debug code here TODO for easier finding
+        //debug code here
         print2D(landPlot);
     }
 
@@ -867,7 +800,7 @@ public class Main
     {
         splitCounter++;
         int split2 = splitCounter + 1;
-        //record current splits in data structure TODO
+        //record current splits in data structure
 
         //apply to the landplot - the land to the bottom right of the split is the new increment up one
         for (int a = (xStart); a < xEnd; a++)
@@ -893,7 +826,7 @@ public class Main
         }
 
         System.out.println("Split depth " + splitCounter);
-        //debug code here TODO for easier finding
+        //debug code here
         //print2D(floatingLandPlot);
         return floatingLandPlot;
     }
