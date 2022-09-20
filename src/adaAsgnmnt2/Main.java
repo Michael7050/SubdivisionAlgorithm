@@ -8,78 +8,29 @@ import java.util.*;
 
 public class Main
 {
+    //set land values for 6x6
+    private static int[][] landValue = {
+            {20, 40, 100, 130, 150, 200},
+            {40, 140, 250, 320, 400, 450},
+            {100, 250, 350, 420, 450, 500},
+            {130, 320, 420, 500, 600, 700},
+            {150, 400, 450, 600, 700, 800},
+            {200, 450, 500, 700, 800, 900}};
 
-    private static int[][] landValue = {{20, 40, 100, 130, 150, 200}, {40, 140, 250, 320, 400, 450}, {100, 250, 350, 420, 450, 500},
-            {130, 320, 420, 500, 600, 700}, {150, 400, 450, 600, 700, 800}, {200, 450, 500, 700, 800, 900}};
-
-    //initialise cost for subdividing a metre of land, and number of divides we want,
-    //also initialising our bits of land
-    private static int cost = 5;
+    //initialise subdividing cost, land area and land plot 2D array
+    private static int cost = 50;
     static int height = 6;
     static int length = 6;
     private int initialLandValue = 0;
     public int currentLandValue = 0;
     private int splitCounter = 0;
     int[][] landPlot = new int[height][length];
+    private static ArrayList <int[][]> maxValue;
 
     public static void main(String[] args)
     {
-
-//        GUI();
-
-        //test method for checking array
-        //arrayToString(landValue);
         Main main = new Main();
-        int plotx = length;
-        int ploty = height;
-
-//        ArrayList<Integer[][]> splitData = new ArrayList<Integer[][]>();
-//
-//        int[][] storeSplitData = {{450, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
-//        int[][] storeSplitData2 = {{500, 0, 0, 0, 0, 0}, {1, 1, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
-//
-//
-////        splitData.add(new ArrayList<int[][]>);
-//
-//        List<int[][]> list = new ArrayList<>();
-//
-//        int[][] copiedArray = new int[storeSplitData.length][storeSplitData[0].length];
-//        for (int i = 0; i < storeSplitData.length; i++) {
-//            for(int j = 0; j < storeSplitData[0].length; j++) {
-//                copiedArray[i][j] = storeSplitData[i][j];
-//            }
-//        }
-//
-//        int[][] copiedArray2 = new int[storeSplitData2.length][storeSplitData2[0].length];
-//        for (int i = 0; i < storeSplitData2.length; i++) {
-//            for(int j = 0; j < storeSplitData2[0].length; j++) {
-//                copiedArray2[i][j] = storeSplitData2[i][j];
-//            }
-//        }
-//
-//        list.add(copiedArray);
-//        list.add(copiedArray2);
-//
-//        for (int[][] array : list ){
-//            int[][] temp = array;
-//            for (int[] element : temp) {
-//                System.out.println(Arrays.toString(element));
-//            }
-//            System.out.println("\n");
-//    }
-//
-//
-//        int[][] area;
-//        area = new int[3][6];
-//        for (int i = 0; i < 3; i++) {
-//            for (int j = 0; j < 6; j++) {
-//                area[i][j] = 1;
-//            }
-//        }
-//
-//        System.out.println(Arrays.deepToString(area));
-
-        main.exactSolution(plotx, ploty);
+        main.exactSolution(length, height);
     }
 
     //Brute Force
@@ -93,17 +44,27 @@ public class Main
 
     private void exactSolution(int x, int y)
     {
-        //takes in a chunk of land XY
+        //takes in land to subdivide
         initialLandValue = getLandPrice(x, y);
-        
         currentLandValue = initialLandValue;
-        //debug code
-        System.out.println(initialLandValue);
+
+        //System.out.println(initialLandValue);
+
         int xStart = 0;
         int xEnd = x;
         int yStart = 0;
         int yEnd = y;
         exactMethod(xStart, xEnd, yStart, yEnd);
+
+        int[] row1 = landPlot[0];
+        int[] row2 = landPlot[1];
+        int[] row3 = landPlot[2];
+        int[] row4 = landPlot[3];
+        int[] row5 = landPlot[4];
+        int[] row6 = landPlot[5];
+        int[] value = {currentLandValue, 0, 0, 0, 0, 0};
+
+        GUI(row1, row2, row3, row4, row5, row6, value);
     }
 
     private void bruteForceMethod(int x, int y)
@@ -341,7 +302,7 @@ public class Main
             //checks to see if result is the same as what was given
             if (currentHighestValue == currentLandValue)
             {
-                return;
+
             }
             else {
 
@@ -355,9 +316,9 @@ public class Main
                     }
                 }
                 currentLandValue = currentHighestValue;
-                System.out.println(splitCounter);
-                System.out.println(currentLandValue);
                 //debug code here TODO for easier finding
+//                System.out.println(splitCounter);
+                System.out.println(currentLandValue);
                 print2D(landPlot);
 
 
@@ -368,8 +329,6 @@ public class Main
                 exactMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
             }
         }
-
-
 
 
         //if result1x = x and result1y = y, then no split, and return
@@ -384,22 +343,6 @@ public class Main
             return 0;
         }
         return landValue[x-1][y-1];
-
-    }
-
-
-//    private int getLandPrice(int x, int y)
-//    {
-////        System.out.println(landValue[x][y]);
-//        return landValue[x][y];
-//    }
-
-    private static void arrayToString(int[][] x)
-    {
-        for (int n = 0 ; n < x.length ; n++)
-        {
-            System.out.println(Arrays.toString(x[n]));
-        }
     }
 
     //Method to calculate the cost of a subdivide cost
@@ -419,23 +362,14 @@ public class Main
     }
 
     //gui
-    public static void GUI() {
-        final int rows = 3;
-        final int col = 6;
-
-        int[][] storeSplitData = {{500, 0, 0, 0, 0, 0}, {1, 1, 1, 1, 1, 1}, {2, 3, 4, 4, 4, 5}, {2, 3, 4, 4, 4, 6}};
-        int[] row1 = storeSplitData[1];
-        int[] row2 = storeSplitData[2];
-        int[] row3 = storeSplitData[3];
-        int[] value = storeSplitData[0];
-
+    public void GUI(int[]row1, int[]row2, int[]row3, int[]row4, int[]row5, int[]row6, int[]value) {
 
         JFrame frame = new JFrame("GUI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
-        frame.setLayout(new GridLayout(0, 6, 0, 0));
+        frame.setLayout(new GridLayout(0, height, 0, 0));
         JLabel label1 = new JLabel(String.valueOf(row1[0]), SwingConstants.CENTER);
         JLabel label2 = new JLabel(String.valueOf(row1[1]), SwingConstants.CENTER);
         JLabel label3 = new JLabel(String.valueOf(row1[2]), SwingConstants.CENTER);
@@ -454,59 +388,179 @@ public class Main
         JLabel label16 = new JLabel(String.valueOf(row3[3]), SwingConstants.CENTER);
         JLabel label17 = new JLabel(String.valueOf(row3[4]), SwingConstants.CENTER);
         JLabel label18 = new JLabel(String.valueOf(row3[5]), SwingConstants.CENTER);
-        JLabel label19 = new JLabel("Value: " + String.valueOf(value[0]), SwingConstants.CENTER);
+        JLabel label19 = new JLabel(String.valueOf(row4[0]), SwingConstants.CENTER);
+        JLabel label20 = new JLabel(String.valueOf(row4[1]), SwingConstants.CENTER);
+        JLabel label21 = new JLabel(String.valueOf(row4[2]), SwingConstants.CENTER);
+        JLabel label22 = new JLabel(String.valueOf(row4[3]), SwingConstants.CENTER);
+        JLabel label23 = new JLabel(String.valueOf(row4[4]), SwingConstants.CENTER);
+        JLabel label24 = new JLabel(String.valueOf(row4[5]), SwingConstants.CENTER);
+        JLabel label25 = new JLabel(String.valueOf(row5[0]), SwingConstants.CENTER);
+        JLabel label26 = new JLabel(String.valueOf(row5[1]), SwingConstants.CENTER);
+        JLabel label27 = new JLabel(String.valueOf(row5[2]), SwingConstants.CENTER);
+        JLabel label28 = new JLabel(String.valueOf(row5[3]), SwingConstants.CENTER);
+        JLabel label29 = new JLabel(String.valueOf(row5[4]), SwingConstants.CENTER);
+        JLabel label30 = new JLabel(String.valueOf(row5[5]), SwingConstants.CENTER);
+        JLabel label31 = new JLabel(String.valueOf(row6[0]), SwingConstants.CENTER);
+        JLabel label32 = new JLabel(String.valueOf(row6[1]), SwingConstants.CENTER);
+        JLabel label33 = new JLabel(String.valueOf(row6[2]), SwingConstants.CENTER);
+        JLabel label34 = new JLabel(String.valueOf(row6[3]), SwingConstants.CENTER);
+        JLabel label35 = new JLabel(String.valueOf(row6[4]), SwingConstants.CENTER);
+        JLabel label36 = new JLabel(String.valueOf(row6[5]), SwingConstants.CENTER);
+        JLabel totalvalue = new JLabel(String.valueOf(value[0]), SwingConstants.CENTER);
 
         Border border = BorderFactory.createLineBorder(Color.black);
         frame.add(label1);
         label1.setBorder(border);
+        label1.setBackground(getColour(row1[0]));
+        label1.setOpaque(true);
         frame.add(label2);
         label2.setBorder(border);
+        label2.setBackground(getColour(row1[1]));
+        label2.setOpaque(true);
         frame.add(label3);
         label3.setBorder(border);
+        label3.setBackground(getColour(row1[2]));
+        label3.setOpaque(true);
         frame.add(label4);
         label4.setBorder(border);
+        label4.setBackground(getColour(row1[3]));
+        label4.setOpaque(true);
         frame.add(label5);
         label5.setBorder(border);
+        label5.setBackground(getColour(row1[4]));
+        label5.setOpaque(true);
         frame.add(label6);
         label6.setBorder(border);
+        label6.setBackground(getColour(row1[5]));
+        label6.setOpaque(true);
         frame.add(label7);
         label7.setBorder(border);
+        label7.setBackground(getColour(row2[0]));
+        label7.setOpaque(true);
         frame.add(label8);
         label8.setBorder(border);
+        label8.setBackground(getColour(row2[1]));
+        label8.setOpaque(true);
         frame.add(label9);
         label9.setBorder(border);
+        label9.setBackground(getColour(row2[2]));
+        label9.setOpaque(true);
         frame.add(label10);
         label10.setBorder(border);
+        label10.setBackground(getColour(row2[3]));
+        label10.setOpaque(true);
         frame.add(label11);
         label11.setBorder(border);
+        label11.setBackground(getColour(row2[4]));
+        label11.setOpaque(true);
         frame.add(label12);
         label12.setBorder(border);
+        label12.setBackground(getColour(row2[5]));
+        label12.setOpaque(true);
         frame.add(label13);
         label13.setBorder(border);
+        label13.setBackground(getColour(row3[0]));
+        label13.setOpaque(true);
         frame.add(label14);
         label14.setBorder(border);
+        label14.setBackground(getColour(row3[1]));
+        label14.setOpaque(true);
         frame.add(label15);
         label15.setBorder(border);
+        label15.setBackground(getColour(row3[2]));
+        label15.setOpaque(true);
         frame.add(label16);
         label16.setBorder(border);
+        label16.setBackground(getColour(row3[3]));
+        label16.setOpaque(true);
         frame.add(label17);
         label17.setBorder(border);
+        label17.setBackground(getColour(row3[4]));
+        label17.setOpaque(true);
         frame.add(label18);
         label18.setBorder(border);
+        label18.setBackground(getColour(row3[5]));
+        label18.setOpaque(true);
         frame.add(label19);
-
-
+        label19.setBorder(border);
+        label19.setBackground(getColour(row4[0]));
+        label19.setOpaque(true);
+        frame.add(label20);
+        label20.setBorder(border);
+        label20.setBackground(getColour(row4[1]));
+        label20.setOpaque(true);
+        frame.add(label21);
+        label21.setBorder(border);
+        label21.setBackground(getColour(row4[2]));
+        label21.setOpaque(true);
+        frame.add(label22);
+        label22.setBorder(border);
+        label22.setBackground(getColour(row4[3]));
+        label22.setOpaque(true);
+        frame.add(label23);
+        label23.setBorder(border);
+        label23.setBackground(getColour(row4[4]));
+        label23.setOpaque(true);
+        frame.add(label24);
+        label24.setBorder(border);
+        label24.setBackground(getColour(row4[5]));
+        label24.setOpaque(true);
+        frame.add(label25);
+        label25.setBorder(border);
+        label25.setBackground(getColour(row5[0]));
+        label25.setOpaque(true);
+        frame.add(label26);
+        label26.setBorder(border);
+        label26.setBackground(getColour(row5[1]));
+        label26.setOpaque(true);
+        frame.add(label27);
+        label27.setBorder(border);
+        label27.setBackground(getColour(row5[2]));
+        label27.setOpaque(true);
+        frame.add(label28);
+        label28.setBorder(border);
+        label28.setBackground(getColour(row5[3]));
+        label28.setOpaque(true);
+        frame.add(label29);
+        label29.setBorder(border);
+        label29.setBackground(getColour(row5[4]));
+        label29.setOpaque(true);
+        frame.add(label30);
+        label30.setBorder(border);
+        label30.setBackground(getColour(row5[5]));
+        label30.setOpaque(true);
+        frame.add(label31);
+        label31.setBorder(border);
+        label31.setBackground(getColour(row6[0]));
+        label31.setOpaque(true);
+        frame.add(label32);
+        label32.setBorder(border);
+        label32.setBackground(getColour(row6[1]));
+        label32.setOpaque(true);
+        frame.add(label33);
+        label33.setBorder(border);
+        label33.setBackground(getColour(row6[2]));
+        label33.setOpaque(true);
+        frame.add(label34);
+        label34.setBorder(border);
+        label34.setBackground(getColour(row6[3]));
+        label34.setOpaque(true);
+        frame.add(label35);
+        label35.setBorder(border);
+        label35.setBackground(getColour(row6[4]));
+        label35.setOpaque(true);
+        frame.add(label36);
+        label36.setBorder(border);
+        label36.setBackground(getColour(row6[5]));
+        label36.setOpaque(true);
+        frame.add(totalvalue);
     }
-
-
-
 
     //code from stackoverflow to print out 2d array for bugtesting.
     public static void print2D(int mat[][])
     {
         for (int[] row : mat)
         {
-
             // converting each row as string
             // and then printing in a separate line
             System.out.println(Arrays.toString(row));
@@ -514,5 +568,70 @@ public class Main
         System.out.println();
     }
 
-
+    private static Color getColour(int a) {
+        if(a == 0) {
+            return new Color(255, 255, 0);
+        }
+        if(a == 1) {
+            return new Color(255, 0, 0);
+        }
+        if(a == 2) {
+            return new Color(255, 128, 0);
+        }
+        if(a == 3) {
+            return new Color(125, 255, 0);
+        }
+        if(a == 4) {
+            return new Color(0, 255, 255);
+        }
+        if(a == 5) {
+            return new Color(0, 128, 255);
+        }
+        if(a == 6) {
+            return new Color(255, 0, 127);
+        }
+        if(a == 7) {
+            return new Color(100, 0, 0);
+        }
+        if(a == 8) {
+            return new Color(0, 100, 0);
+        }
+        if(a == 9) {
+            return new Color(0, 10, 255);
+        }
+        if(a == 10) {
+            return new Color(128, 100, 0);
+        }
+        if(a == 11) {
+            return new Color(180, 100, 50);
+        }
+        if(a == 12) {
+            return new Color(153, 0, 153);
+        }
+        if(a == 13) {
+            return new Color(229, 204, 255);
+        }
+        if(a == 14) {
+            return new Color(229, 255, 204);
+        }
+        if(a == 15) {
+            return new Color(64, 64, 64);
+        }
+        if(a == 16) {
+            return new Color(255, 100, 60);
+        }
+        if(a == 17) {
+            return new Color(153, 204, 255);
+        }
+        if(a == 118) {
+            return new Color(192, 192, 192);
+        }
+        if(a == 19) {
+            return new Color(178, 255, 102);
+        }
+        if(a == 20) {
+            return new Color(51, 0, 102);
+        }
+        else return Color.white;
+    }
 }
