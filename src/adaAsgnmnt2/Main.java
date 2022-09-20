@@ -130,6 +130,7 @@ public class Main {
     private void bruteForceMethod(int xStart, int xEnd, int yStart, int yEnd, int splitCount, int value, int[][] floatingLandPlot)
     {
         splitCount++;
+        splitCounter++;
 
         boolean vertSplit = true;
         //temp result values
@@ -180,7 +181,7 @@ public class Main {
                 //TODO - function here that prints current landarray and value to arraylist
                 System.out.println("Splitting vertically first: ");
                 System.out.println("Land value: " + tempLandValue);
-                updateFloatingArray(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, floatingLandPlot);
+                updateFloatingArray(result2XStart, result2XEnd, result2YStart, result2YEnd, result1XStart, result1XEnd, result1YStart, result1YEnd, floatingLandPlot);
                 System.out.println();
 
 
@@ -225,7 +226,7 @@ public class Main {
                 //TODO - function here that prints current landarray and value
                 System.out.println("Splitting Horizontally second:");
                 System.out.println("Land value: " + tempLandValue);
-                updateFloatingArray(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, floatingLandPlot);
+                updateFloatingArray(result2XStart, result2XEnd, result2YStart, result2YEnd, result1XStart, result1XEnd, result1YStart, result1YEnd, floatingLandPlot);
                 System.out.println();
 
                 //bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue, floatingLandPlot);
@@ -570,17 +571,25 @@ public class Main {
         print2D(landPlot);
     }
 
-    public int[][] updateFloatingArray(int xStart, int xEnd, int yStart, int yEnd, int splitCount, int[][] floatingLandPlot)
+    //change this so it updates the full amount of the split?
+    public int[][] updateFloatingArray(int xStart, int xEnd, int yStart, int yEnd, int x2Start, int x2End, int y2Start, int y2End, int[][] floatingLandPlot)
     {
+        splitCounter++;
+        int split2 = splitCounter +1;
         //record current splits in data structure TODO
 
         //apply to the landplot - the land to the bottom right of the split is the new increment up one
         for (int a = (xStart); a < xEnd; a++) {
             for (int b = (yStart); b < yEnd; b++) {
-                floatingLandPlot[b][a] = splitCount;
+                floatingLandPlot[b][a] = splitCounter;
             }
         }
-        System.out.println("Split depth " + splitCount);
+        for (int a = (x2Start); a < x2End; a++) {
+            for (int b = (y2Start); b < y2End; b++) {
+                floatingLandPlot[b][a] = split2;
+            }
+        }
+        System.out.println("Split depth " + splitCounter);
         //debug code here TODO for easier finding
         print2D(floatingLandPlot);
         return floatingLandPlot;
