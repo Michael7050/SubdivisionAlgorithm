@@ -184,7 +184,7 @@ public class Main {
                 System.out.println();
 
 
-                bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue, floatingLandPlot);
+                //bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue, floatingLandPlot);
                 bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, tempLandValue, floatingLandPlot);
 
             }
@@ -228,7 +228,7 @@ public class Main {
                 updateFloatingArray(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, floatingLandPlot);
                 System.out.println();
 
-                bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue, floatingLandPlot);
+                //bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue, floatingLandPlot);
                 bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, tempLandValue,floatingLandPlot);
 
             }
