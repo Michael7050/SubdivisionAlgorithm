@@ -90,18 +90,21 @@ public class Main {
     public void bruteForce(int x, int y) {
         //this should be a working brute force method, that goes through each combination i think.
 
-        currentLandValue = landValue[x - 1][y - 1];
+        currentLandValue = getLandPrice(x,y);
         initialLandValue = currentLandValue;
         splitCounter = 0;
-        //debug code here
-        System.out.println(currentLandValue);
+        int[][] floatingLandPlot = new int[x][y];
 
         int xStart = 0;
         int xEnd = x;
         int yStart = 0;
         int yEnd = y;
 
-        bruteForceMethod(xStart,xEnd,yStart,yEnd, splitCounter, currentLandValue);
+        updateArray(xStart,xEnd,yStart,yEnd,splitCounter);
+        System.out.println(currentLandValue);
+        System.out.println("Starting recursion");
+
+        bruteForceMethod(xStart,xEnd,yStart,yEnd, splitCounter, currentLandValue, floatingLandPlot);
 
         //do i take a snapshot here?
     }
@@ -124,7 +127,7 @@ public class Main {
     }
 
 
-    private void bruteForceMethod(int xStart, int xEnd, int yStart, int yEnd, int splitCount, int value)
+    private void bruteForceMethod(int xStart, int xEnd, int yStart, int yEnd, int splitCount, int value, int[][] floatingLandPlot)
     {
         splitCount++;
 
@@ -174,12 +177,15 @@ public class Main {
                 //reduce cost of split
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
-                //TODO - function here that prints current landarray and value
-                updateArray(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount);
-                System.out.println(tempLandValue);
+                //TODO - function here that prints current landarray and value to arraylist
+                System.out.println("Splitting vertically first: ");
+                System.out.println("Land value: " + tempLandValue);
+                updateFloatingArray(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, floatingLandPlot);
+                System.out.println();
 
-                bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue);
-                bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, tempLandValue);
+
+                bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue, floatingLandPlot);
+                bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, tempLandValue, floatingLandPlot);
 
             }
         }
@@ -217,11 +223,13 @@ public class Main {
                 tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
                 //TODO - function here that prints current landarray and value
-                System.out.println(tempLandValue);
-                updateArray(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount);
+                System.out.println("Splitting Horizontally second:");
+                System.out.println("Land value: " + tempLandValue);
+                updateFloatingArray(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, floatingLandPlot);
+                System.out.println();
 
-                bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue);
-                bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, tempLandValue);
+                bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd, splitCount, tempLandValue, floatingLandPlot);
+                bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd, splitCount, tempLandValue,floatingLandPlot);
 
             }
         }
@@ -545,7 +553,6 @@ public class Main {
             // and then printing in a separate line
             System.out.println(Arrays.toString(row));
         }
-        System.out.println();
     }
 
     public void updateArray(int xStart, int xEnd, int yStart, int yEnd, int splitCount)
@@ -558,9 +565,25 @@ public class Main {
                 landPlot[b][a] = splitCount;
             }
         }
-        System.out.println(splitCount);
+        System.out.println("Split depth " + splitCount);
         //debug code here TODO for easier finding
         print2D(landPlot);
+    }
+
+    public int[][] updateFloatingArray(int xStart, int xEnd, int yStart, int yEnd, int splitCount, int[][] floatingLandPlot)
+    {
+        //record current splits in data structure TODO
+
+        //apply to the landplot - the land to the bottom right of the split is the new increment up one
+        for (int a = (xStart); a < xEnd; a++) {
+            for (int b = (yStart); b < yEnd; b++) {
+                floatingLandPlot[b][a] = splitCount;
+            }
+        }
+        System.out.println("Split depth " + splitCount);
+        //debug code here TODO for easier finding
+        print2D(floatingLandPlot);
+        return floatingLandPlot;
     }
 
 
