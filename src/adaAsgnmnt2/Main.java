@@ -87,7 +87,9 @@ public class Main
         //do i take a snapshot here?
     }
     //greedy
-    private void greedySolution(int x, int y)
+    private void greedySolution(int x, int y){
+    }
+
 
 
     private void exactSolution(int x, int y)
