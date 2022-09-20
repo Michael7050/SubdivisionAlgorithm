@@ -6,24 +6,23 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.*;
 
-public class Main
-{
+public class Main {
 
     private static int[][] landValue = {{20, 40, 100, 130, 150, 200}, {40, 140, 250, 320, 400, 450}, {100, 250, 350, 420, 450, 500},
             {130, 320, 420, 500, 600, 700}, {150, 400, 450, 600, 700, 800}, {200, 450, 500, 700, 800, 900}};
 
     //initialise cost for subdividing a metre of land, and number of divides we want,
     //also initialising our bits of land
-    private static int cost = 50;
+    private static int cost = 5;
     static int height = 3;
-    static int length = 6;
+    static int length = 3;
     private int initialLandValue = 0;
     public int currentLandValue = 0;
     private int splitCounter = 0;
     int[][] landPlot = new int[height][length];
+    int floatingValue = 0;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
 
 //        GUI();
 
@@ -79,21 +78,40 @@ public class Main
 //
 //        System.out.println(Arrays.deepToString(area));
 
-        main.exactSolution(plotx, ploty);
+        main.bruteForce(plotx, ploty);
     }
 
     //Brute Force
 
-    private void bruteForce(int x, int y)
-    {
-        initialLandValue = getLandPrice(x, y);
-        bruteForceMethod(x, y);
-        //then traverse data structure and return result with highest data value.
+    //TODO
+    //create a value for when it isn't splitting and save
+    //track land value
+
+    public void bruteForce(int x, int y) {
+        //this should be a working brute force method, that goes through each combination i think.
+
+        currentLandValue = landValue[x][y];
+        initialLandValue = currentLandValue;
+        splitCounter = 0;
+        //debug code here
+        System.out.println(currentLandValue);
+
+        int xStart = 0;
+        int xEnd = x;
+        int yStart = 0;
+        int yEnd = y;
+
+        bruteForceMethod(xStart,xEnd,yStart,yEnd);
+
+        //do i take a snapshot here?
     }
+
+
 
     private void exactSolution(int x, int y)
     {
-        initialLandValue = getLandPrice(x + 1, y + 1);
+        //takes in a chunk of land XY
+        initialLandValue = getLandPrice(x, y);
         
         currentLandValue = initialLandValue;
         //debug code
@@ -105,90 +123,105 @@ public class Main
         exactMethod(xStart, xEnd, yStart, yEnd);
     }
 
-    private void bruteForceMethod(int x, int y)
+
+    private void bruteForceMethod(int xStart, int xEnd, int yStart, int yEnd)
     {
-        //first reduce the total value by what we are given -
-        initialLandValue = initialLandValue - getLandPrice(x, y);
 
-        int result1X = x;
-        int result2X = x;
-        int result1Y = y;
-        int result2Y = y;
-        boolean verticalSplit = true;
+        boolean vertSplit = true;
+        //temp result values
 
-        //we use recursion
-        //first split checks each possible split and gives us value of the two chunks of land, and total value of land so far.
+        //final result values
+        int result1XStart = xStart;
+        int result1XEnd = xEnd;
+        int result1YStart = yEnd;
+        int result1YEnd = yEnd;
+        int result2XStart = xStart;
+        int result2XEnd = xEnd;
+        int result2YStart = yEnd;
+        int result2YEnd = yEnd;
 
-        //first split vertically, run from left to right
-        if (x > 1)
+        int x = ((xEnd) - (xStart));
+        int y = ((yEnd) - (yStart));
+
+        if (x > 1) //checks for if land is wider than one
         {
-            for (int l = 1; l < x; l++)
-            {
-                result1X = l;
-                result2X = x-l;
-                result1Y = y;
-                result2Y = y;
-                verticalSplit = true;
 
+            for (int l = xStart+1; l < xEnd; l++) {
+
+                result1XStart = xStart;
+                result1XEnd = l;
+                result1YStart = yStart;
+                result1YEnd = yEnd;
+
+                //temp 2 is results to the right
+                result2XStart = l;
+                result2XEnd = xEnd;
+                result2YStart = yStart;
+                result2YEnd = yEnd;
+                vertSplit = true;
+
+                //find area of each result
+                int result1XArea = ((result1XEnd) - (result1XStart));
+                int result1YArea = ((result1YEnd) - (result1YStart));
+                int result2XArea = ((result2XEnd) - (result2XStart));
+                int result2YArea = ((result2YEnd) - (result2YStart));
+
+                //subtract current chunk of land from value
+                int tempLandValue = currentLandValue - getLandPrice(x,y);
                 //for each split, add new value
-                initialLandValue = initialLandValue + (getLandPrice(result1X, result1Y) + getLandPrice(result2X, result2Y));
+                tempLandValue = tempLandValue + (getLandPrice(result1XArea, result1YArea) + getLandPrice(result2XArea, result2YArea));
                 //reduce cost of split
-                initialLandValue = initialLandValue - subdivideCost(verticalSplit, x, y);
+                tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
-                //record new values in arraylist(?) TODO
+                //TODO - function here that prints current landarray and value
+                updateArray(result2XStart, result2XEnd, result2YStart, result2YEnd);
+                //System.out.println(currentValue);
 
-                //run recursive function on the left side, then run it on the right side
-                //have land value be floating??? TODO
-                bruteForceMethod(result1X, result1Y);
-                bruteForceMethod(result2X,result2Y);
+                bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd);
+                bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
+
             }
         }
 
-        //then we split it horizontally from bottom to top
-        if (y > 1)
-        {
-            for (int w = 1; w < y; w++)
-            {
-                result1Y = w;
-                result2Y = y-w;
-                result1X = x;
-                result2X = x;
-                verticalSplit = false;
+        //go through horizontal splits now
+        if (y > 0) {
+            for (int w = yStart + 1; w < yEnd; w++) {
+                //set x values as they don't change
+                result1XStart = xStart;
+                result2XStart = xStart;
+                result1XEnd = xEnd;
+                result2XEnd = xEnd;
 
+                //set y values
+                //temp 1 is above, temp 2 is below
+                result1YStart = yStart;
+                result1YEnd = w;
+
+                result2YStart = w;
+                result2YEnd = yEnd;
+
+                vertSplit = false;
+
+                //find area of each result
+                int result1XArea = ((result1XEnd) - (result1XStart));
+                int result1YArea = ((result1YEnd) - (result1YStart));
+                int result2XArea = ((result2XEnd) - (result2XStart));
+                int result2YArea = ((result2YEnd) - (result2YStart));
+
+                //subtract current chunk of land from value
+                int tempLandValue = currentLandValue - getLandPrice(x,y);
                 //for each split, add new value
-                initialLandValue = initialLandValue + (landValue[result1X][result1Y] + landValue[result2X][result2Y]);
+                tempLandValue = tempLandValue + (getLandPrice(result1XArea, result1YArea) + getLandPrice(result2XArea, result2YArea));
                 //reduce cost of split
-                initialLandValue = initialLandValue - subdivideCost(verticalSplit, x, y);
+                tempLandValue = tempLandValue - subdivideCost(vertSplit, x, y);
 
-                //record new values in arraylist(?) TODO
-                bruteForceMethod(result1X, result1Y);
-                bruteForceMethod(result2X,result2Y);
+                //TODO - function here that prints current landarray and value
+
+                bruteForceMethod(result1XStart, result1XEnd, result1YStart, result1YEnd);
+                bruteForceMethod(result2XStart, result2XEnd, result2YStart, result2YEnd);
+
             }
         }
-
-        //if both x and y are 1, return.
-
-        return;
-
-        //take in an area of land with length x, and width y
-
-        //split vertically first
-
-            //do a for loop that iterates over each split
-        //if x is over 1, split at 1, split++ until split is at x-1
-        //then
-        //if y is over 1, split at 1, split++ until split is at y-1
-            //this will give us two pieces of land
-            //do the split again on each piece of land
-
-        //this will result in two subplots of land with x and y
-
-        //value of each plot is landValue[x][y]
-
-        //if
-
-
-        //so for a plot land with length x and width y, total number of different splits will be ((x-1) + (y-1))
 
     }
 
@@ -511,6 +544,23 @@ public class Main
             System.out.println(Arrays.toString(row));
         }
         System.out.println();
+    }
+
+    public void updateArray(int xStart, int xEnd, int yStart, int yEnd)
+    {
+        splitCounter++;
+        //record current splits in data structure TODO
+
+        //apply to the landplot - the land to the bottom right of the split is the new increment up one
+        for (int a = (xStart); a < xEnd; a++) {
+            for (int b = (yStart); b < yEnd; b++) {
+                landPlot[b][a] = splitCounter;
+            }
+        }
+        System.out.println(splitCounter);
+        System.out.println(currentLandValue);
+        //debug code here TODO for easier finding
+        print2D(landPlot);
     }
 
 
