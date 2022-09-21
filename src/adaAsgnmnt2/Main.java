@@ -818,7 +818,6 @@ public class Main
             }
         }
 
-
         if (value > currentBestValue)
         {
             currentBestValue = value;
@@ -827,7 +826,6 @@ public class Main
 
         System.out.println("Split depth " + splitCounter);
         //debug code here
-        //print2D(floatingLandPlot);
         return floatingLandPlot;
     }
 
