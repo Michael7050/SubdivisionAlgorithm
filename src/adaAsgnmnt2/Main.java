@@ -1,3 +1,6 @@
+//Lachlan Wong 20118570
+//Michael Jones 20125654
+
 package adaAsgnmnt2;
 
 import javax.swing.*;
